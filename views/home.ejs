@@ -1,16 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/style.css" rel="stylesheet" type="text/css">
-    <script src="/js/jquery-3.6.0.js"></script>
-    <script src="/js/functions.js"></script>
-    <link rel="shortcut icon" href="#">
-    <title>Home</title>
-</head>
-<body>
-    <h1>Hola</h1>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/css/style.css" rel="stylesheet" type="text/css">
+        <script src="/js/jquery-3.6.0.js"></script>
+        <script src="/js/functions.js"></script>
+        <link rel="shortcut icon" href="#">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <title>Home</title>
+    </head>
+    <body class="bg-[#FFF89A]">
+        <header class="bg-[#1A5F7A] flex justify-between">
+            <div id="logo" class="ml-[10%] mt-[20px] mb-[20px]">
+                <a href="./index.html"><img class="max-w-xs max-h-xs" src="./img/logo/logoAmarillo.png"></a>
+            </div>
+            <div id="userExp" class="flex mr-[10%] items-center">
+                <img class="max-w-[40px] max-h-[40px] mr-[20px]" src="./img/anonuser.png">
+                <form>
+                    <input class="max-w-[200px] max-h-[40px] mt-[20px]" type="text" placeholder="Search...">
+                    <button type="submit" class="pt-[10px]"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+        </header>
+        <div id="content" class="flex">
+            <div id="portfolios" class="w-[30%] bg-[#FFF89A] pt-[30px] pl-[5%]">
+                <h1 class="font-bold text-2xl">Your portfolios:</h1>
+                <ul class="ml-[20px]" id="portfoliosList">
+                    <li><p class="portfolio text-lg max-w-[60%]">Portfolio 1</p></li>
+                    <li><p class="portfolio text-lg max-w-[60%]">Portfolio 2</p></li>
+                    <li><p class="portfolio text-lg max-w-[60%]">Portfolio 3</p></li>
+                    <li><p class="portfolio text-lg max-w-[60%]">Portfolio 4</p></li>
+                </ul>
+            </div>
+
+            <div id="portfolios" class="w-[40%] bg-[#FFF89A] pt-[30px] pl-[5%]">
+                <div id="title" class="flex">
+                    <h1 class="font-bold text-2xl">Portfolio 1: 100$</h1>
+                    <p class="ml-[10px] p-[3px] bg-lime-600 rounded-full">+10%</p>
+                </div>
+            </div>
+            <div id="favourites" class="w-[30%] bg-[#FFF89A]">
+                <h1 class="font-bold text-2xl">Favourites assets</h1>
+            </div>
+        </div>
+    </body>
 </html>
