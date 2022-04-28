@@ -1,8 +1,9 @@
 import express from 'express';
 import path from 'path';
 import {consulta} from './public/javascripts/conector.js';
+import {conection} from './public/javascripts/apiConector.js'
 const app = express()
-const port = 3000
+const port = 3001
 const __dirname = path.resolve();
 
 app.use('/static', express.static(__dirname + '/public'));
@@ -11,6 +12,9 @@ app.use('/css', express.static(path.join(__dirname, 'public/stylesheets')))
 app.use('/img', express.static(path.join(__dirname, 'public/images')))
 app.set('view engine', 'ejs');
 
+app.get('/login', (req, res) => {
+    res.render('loggin')
+})
 app.get('/', (req, res) => {
     res.render('home')
 })
@@ -21,6 +25,11 @@ app.get('/consulta/:query', (req,res) =>{
         if(err) throw err
         res.json(result)
     })
+})
+
+app.get('/CryptoDetApi:url', (req, res) => {
+    let url = req.params.url
+    return conection(url)
 })
 
 app.listen(port, () => {
