@@ -1,31 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/css/style.css" rel="stylesheet" type="text/css">
-        <script src="/js/jquery-3.6.0.js"></script>
-        <script src="/js/functions.js"></script>
-        <script src="/js/echarts.js"></script>
-        <link rel="shortcut icon" href="#">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <title>Home</title>
-    </head>
-    <body class="bg-[#FFF89A]">
-        <header class="bg-gradient-to-b from-[#36677A] to-[#1A5F7A] flex justify-between">
-            <div id="logo" class="ml-[10%] mt-[20px] mb-[20px]">
-                <a href="./index.html"><img class="max-w-xs max-h-xs" src="./img/logo/logoAmarillo.png"></a>
-            </div>
-            <div id="userExp" class="flex mr-[10%] items-center">
-                <img class="max-w-[40px] max-h-[40px] mr-[20px]" src="./img/anonuser.png">
-                <form>
-                    <input class="max-w-[200px] max-h-[40px] mt-[20px]" type="text" placeholder="Search...">
-                    <button type="submit" class="pt-[10px]"><i class="fa fa-search"></i></button>
-                </form>
-            </div>
-        </header>
+    <%-include("partials/header.ejs", {title:"Portfolio"}) %>
         <div id="content" class="flex">
             <div id="portfolios" class="w-[20%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
                 <h1 class="font-bold text-2xl">Your portfolios:</h1>
