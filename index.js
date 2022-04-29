@@ -15,6 +15,19 @@ app.set('view engine', 'ejs');
 app.get('/login', (req, res) => {
     res.render('loggin')
 })
+
+app.get('/coin/:currency', (req, res) => {
+    const content = {
+        "name" : "Oasis Network",
+        "abbreviation" : "ROSE",
+        "price" : 0.21,
+        "marketCap" : 749133400,
+        "volume" : 71465582,
+        "supply" : 3490000000
+    }
+    res.render('coin', {content})
+})
+
 app.get('/', (req, res) => {
     res.render('home')
 })
