@@ -5,16 +5,15 @@
             <div id="portfolios" class="w-[20%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
                 <h1 class="font-bold text-2xl">Your portfolios:</h1>
                 <ul class="ml-[20px]" id="portfoliosList">
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 1</p></li>
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 2</p></li>
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 3</p></li>
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 4</p></li>
+                    <% portfolios.forEach(function(portfolio){%>
+                        <li><a href="/portfolio/<%= portfolio.portfolio_id %>"><p class="portfolio text-lg max-w-[80%]"><%=portfolio.name%></p></a></li>
+                    <%}); %>
                 </ul>
             </div>
 
             <div id="portfolios" class="w-[50%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
                 <div id="title" class="flex">
-                    <h1 class="font-bold text-2xl">Portfolio 1: 100$</h1>
+                    <h1 class="font-bold text-2xl"><%= portfolio.name %>: 100$</h1>
                     <p class="ml-[10px] p-[2px] bg-lime-600 rounded-full">+10%</p>
                 </div>
                 <div id="chart" style="width: 100%;height:400px;">
@@ -50,7 +49,10 @@
                 </div>
                 <hr>
                 <div id="yourAssets" class="pt-[20px]">
-                    <h2 class="font-bold text-xl">Your assets</h2>
+                    <div class="flex justify-between">
+                        <h2 class="font-bold text-xl">Your assets:</h2>
+                        <button>+ Add asset</button>
+                    </div>
                     <table class="w-full ml-[20px] table-auto">
                         <thead>
                             <tr class="hover:bg-[#fffbb8]">
@@ -61,6 +63,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% assets.forEach(function(asset){%>
+                                <tr class="hover:bg-[#fffbb8]">
+                                    <td>Nombre a insertar (abb)</td>
+                                    <td>(Precio ATR)$</td>
+                                    <td><%=asset.ammount%>(ABB)</td>
+                                    <td>Precio * <%=asset.ammount%>-<%=asset.spended%>$</td>
+                                </tr>
+                            <%}); %>
                             <tr class="hover:bg-[#fffbb8]">
                                 <td>Oasis Network ($ROSE)</td>
                                 <td>0.21$</td>
@@ -73,7 +83,7 @@
             </div>
             
             <div id="favourites" class="w-[30%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
-                <h1 class="font-bold text-2xl">Favourites assets</h1>
+                <h1 class="font-bold text-2xl">Favourite assets:</h1>
                 <table class="table-auto w-full">
                     <thead>
                         <tr>
@@ -82,10 +92,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-center"><button><i class="fa fa-star"></i></button></td>
-                            <td>Oasis Network ($ROSE)</td>
-                        </tr>
+                        <% favourites.forEach(function(favourite){%>
+                            <tr>
+                                <td class="text-center"><button><i class="fa fa-star"></i></button></td>
+                                <td><a href="../coin/<%=favourite.name.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
+                            </tr>
+                        <%}); %>
                     </tbody>
                 </table>
             </div>

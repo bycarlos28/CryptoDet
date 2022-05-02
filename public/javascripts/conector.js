@@ -2,8 +2,8 @@ import mysql from 'mysql';
 
 const config = {
     host:'127.0.0.1',
-    user:'admin',
-    password:'Correa28',
+    user:'root',
+    password:'toor',
     database:'CryptoDet',
     port: 3306
 }
