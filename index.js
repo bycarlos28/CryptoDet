@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import axios from 'axios';
 import {consulta} from './public/javascripts/conector.js';
-import {conection} from './public/javascripts/apiConector.js'
 const app = express()
 const port = 3001
 const __dirname = path.resolve();
@@ -16,17 +15,56 @@ app.set('view engine', 'ejs');
 app.get('/login', (req, res) => {
     res.render('loggin')
 })
-
-app.get('/coin/:currency', (req, res) => {
-    const content = {
-        "name" : "Oasis Network",
-        "abbreviation" : "ROSE",
-        "price" : 0.21,
-        "marketCap" : 749133400,
-        "volume" : 71465582,
-        "supply" : 3490000000
+app.get('/coin/:abb', async (req, res) => {
+    // Getting the coin from url
+    let coin = {}
+    const abbreviation=req.params.abb.toUpperCase()
+    try {
+        const query = 'SELECT * FROM coins WHERE coins.abbreviation="'+abbreviation+'";'
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            coin=response.data[0]
+        })
     }
-    res.render('coin', {content})
+    catch (err) {
+        console.error(err);
+    }
+
+    // Getting coin's contracts
+    let contracts = {}
+    try {
+        const query = 'SELECT ct.platform, ct.token_address FROM coins c INNER JOIN contracts ct ON c.coin_id = ct.coin_id WHERE c.abbreviation="'+abbreviation+'";'
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            contracts=response.data
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
+
+    // Getting coin's social links
+    let socials = {}
+    try {
+        const query = 'SELECT s.type, s.platform, s.url FROM coins c INNER JOIN socials s ON c.coin_id = s.coin_id WHERE c.abbreviation="'+abbreviation+'";'
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            socials=response.data
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
+
+    // Getting user's favourite coins
+    let favourites = {}
+    try {
+        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id=1 = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            favourites=response.data
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
+    res.render('coin', {coin, contracts, socials, favourites})
 })
 
 app.get('/portfolio/:id', async (req, res) => {
@@ -58,7 +96,7 @@ app.get('/portfolio/:id', async (req, res) => {
     // Getting user's favourite coins
     let favourites = {}
     try {
-        const query = 'SELECT f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id=1 = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id=1 = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             favourites=response.data
         })
@@ -67,10 +105,17 @@ app.get('/portfolio/:id', async (req, res) => {
         console.error(err);
     }
 
-    // Getting the asset from the portfolio we wanna show
-    const assets = [
-        {"id": 0, "portfolio_id" : 4, "coinid" : 0, "ammount" : 6000, "spended" : 500}
-    ]
+    // Getting the assets from the portfolio we wanna show
+    let assets = {}
+    try {
+        const query = 'SELECT c.name, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.user_id='+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session and ADD columns price and profit/loss
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            assets=response.data
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
 
     res.render('portfolio', {portfolios, portfolio, favourites, assets})
 })
@@ -81,11 +126,6 @@ app.get('/consulta/:query', (req,res) =>{
         if(err) throw err
         res.json(result)
     })
-})
-
-app.get('/CryptoDetApi/:url', (req, res) => {
-    let url = req.params.url
-    return conection(url)
 })
 
 app.listen(port, () => {

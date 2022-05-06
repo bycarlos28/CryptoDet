@@ -1,7 +1,7 @@
-import mysql from 'mysql';
+import mysql from "mysql";
 
 const config = {
-    host:'127.0.0.1',
+    host:'localhost',
     user:'root',
     password:'toor',
     database:'CryptoDet',
@@ -20,7 +20,6 @@ const consulta = (sql, callback) =>{
         }
     })
 }
-
 
 export {
     consulta

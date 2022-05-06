@@ -5,7 +5,9 @@
     <link href="/css/style.css" rel="stylesheet" type="text/css">
     <script src="/js/jquery-3.6.0.js"></script>
     <script src="/js/functions.js"></script>
-    <script src="/js/echarts.js"></script>
+    <script src="/js/echarts.js"></script>  
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <title><%= title %></title>
@@ -18,8 +20,8 @@
         </div>
         <div id="userExp" class="flex mr-[10%] items-center">
             <img class="max-w-[40px] max-h-[40px] mr-[20px]" src="/img/anonuser.png">
-            <form>
-                <input class="max-w-[200px] max-h-[40px] mt-[20px]" type="text" placeholder="Search...">
+            <form id="searcher" action="">
+                <input id="input_searcher" class="max-w-[200px] max-h-[40px] mt-[20px]" type="text" placeholder="Search...">
                 <button type="submit" class="pt-[10px]"><i class="fa fa-search"></i></button>
             </form>
         </div>

@@ -51,11 +51,11 @@
                 <div id="yourAssets" class="pt-[20px]">
                     <div class="flex justify-between">
                         <h2 class="font-bold text-xl">Your assets:</h2>
-                        <button>+ Add asset</button>
+                        <button class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]" onclick="alert('Buy or sell')">+ Add asset</button>
                     </div>
                     <table class="w-full ml-[20px] table-auto">
                         <thead>
-                            <tr class="hover:bg-[#fffbb8]">
+                            <tr class="font-bold">
                                 <td>Name</td>
                                 <td>Price</td>
                                 <td>Holdings</td>
@@ -65,18 +65,12 @@
                         <tbody>
                             <% assets.forEach(function(asset){%>
                                 <tr class="hover:bg-[#fffbb8]">
-                                    <td>Nombre a insertar (abb)</td>
+                                    <td><a href="../coin/<%=asset.abbreviation.toLowerCase()%>"><%=asset.name%> ($<%=asset.abbreviation%>)</a></td>
                                     <td>(Precio ATR)$</td>
-                                    <td><%=asset.ammount%>(ABB)</td>
-                                    <td>Precio * <%=asset.ammount%>-<%=asset.spended%>$</td>
+                                    <td><%=asset.amount%> <%=asset.abbreviation%></td>
+                                    <td>Precio * <%=asset.amount%>-<%=asset.spended%>$</td>
                                 </tr>
                             <%}); %>
-                            <tr class="hover:bg-[#fffbb8]">
-                                <td>Oasis Network ($ROSE)</td>
-                                <td>0.21$</td>
-                                <td>6000 ROSE</td>
-                                <td>+150$</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -93,9 +87,9 @@
                     </thead>
                     <tbody>
                         <% favourites.forEach(function(favourite){%>
-                            <tr>
-                                <td class="text-center"><button><i class="fa fa-star"></i></button></td>
-                                <td><a href="../coin/<%=favourite.name.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
+                            <tr id="fav_<%=favourite.favourites_id%>">
+                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>')"><i class="fa fa-star"></i></button></td>
+                                <td><a href="../coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
                             </tr>
                         <%}); %>
                     </tbody>

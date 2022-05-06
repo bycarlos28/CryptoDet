@@ -10,12 +10,10 @@ async function conection(url){
     } catch(ex) {
         response = null;
         // error
-        console.log(ex);
     }
     if (response) {
         // success
-        const json = response.data;
-        console.log(json);
+        const json = response.data.result;
         return json
     }
 }

@@ -6,23 +6,51 @@
             <div id="coinHeader" class="flex">
                 <div class="border-2 border-r-zinc-300 border-transparent pr-[15px] w-[40%]">
                     <div id="name" class="flex items-end">
-                        <h1 class="font-bold text-4xl"><%= content.name %></h1>
-                        <h2 class="text-2xl ml-[20px] bg-[#FFC900] rounded-full p-[7px] pt-[3px] pb-[3px]">$<%= content.abbreviation %></h2>
+                        <h1 class="font-bold text-4xl"><%= coin.name %></h1>
+                        <h2 class="text-2xl ml-[20px] bg-[#FFC900] rounded-full p-[7px] pt-[3px] pb-[3px]">$<%= coin.abbreviation %></h2>
                     </div>
                     <div id="title" class="flex items-end">
                         <h2 class="text-sm self-start ml-[5%]">Price:</h2>
-                        <p class="text-2xl ml-[10px]">$<%= content.price %></p>
-                        <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-lime-500 rounded-full">+10%</p>
+                        <p class="text-2xl ml-[10px]">$<%= coin.price %></p>
+                        <% if (coin.percent_change_24h >= 0) { %>
+                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-lime-500 rounded-full">+<%= coin.percent_change_24h %>%</p>
+                        <% } else { %>
+                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-red-700 rounded-full">-<%= coin.percent_change_24h %>%</p>
+                        <% } %>
                     </div>
                 </div>
                 <div id="contracts" class="w-[30%] pl-[15px] border-2 border-r-zinc-300 border-transparent">
                     <p class="font-bold">Contracts:</p>
-                    <p>0x340234903249023</p>
+                    <% if (contracts.length != 0) { %>
+                        <% contracts.forEach(function(contract){%>
+                            <div class="flex">
+                                <p class="mr-[5px]"><%= contract.platform%>:</p>
+                                <button onclick="copyElementText('contract')" class="mr-[10px]" title="Copy Address"><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+                                <p><%= contract.token_address.substring(0, 4)%>...<%= contract.token_address.slice(-15)%></p>
+                                <p id="contract" hidden><%= contract.token_address %></p>
+                            </div>
+                        <%}); %>
+                    <% } else { %>
+                        <p>N/A</p>
+                    <% } %>
                 </div>
                 <div id="social" class="w-[30%] pl-[15px]">
                     <p class="font-bold">Social networks:</p>
-                    <p>Twitter:</p>
-                    <p>Facebook:</p>
+                    <% if (socials.length != 0) { %>
+                        <% socials.forEach(function(social){%>
+                            <div class="flex">
+                                <% if (social.type == "website") { %>
+                                    <img class="max-w-[20px] max-h-[20px] mr-[8px]" src="/img/social/<%= social.platform%>.png"><a href="<%= social.url%>" target="_blank"><p><%= social.platform%></p></a>
+                                <% } else if (social.type == "community") { %>
+                                    <img class="max-w-[20px] max-h-[20px] mr-[8px]" src="/img/social/<%= social.platform%>.png"><a href="<%= social.url%>" target="_blank"><p><%= social.platform%></p></a>
+                                <% } else if (social.type == "whitepaper") { %>
+                                    <img class="max-w-[20px] max-h-[20px] mr-[8px]" src="/img/social/<%= social.type%>.png"><a href="<%= social.url%>" target="_blank"><p><%= social.type%></p></a>
+                                <% } %>
+                            </div>
+                        <%}); %>
+                    <% } else { %>
+                        <p>N/A</p>
+                    <% } %>
                 </div>
             </div>
             <div id="chart" class="w-full h-[400px] mt-[20px]">
@@ -59,46 +87,48 @@
             <div id="coinStats" class="flex justify-around">
                 <div id="marketCap" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
                     <h2>Market Cap:</h2>
-                    <p><%= content.marketCap %>$</p>
+                    <p><%= coin.marketCap %>$</p>
                 </div>
                 <div id="volume" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
                     <h2>Volume:</h2>
-                    <p><%= content.volume %>$</p>
+                    <p><%= coin.volume %>$</p>
                 </div>
                 <div id="supply" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
                     <h2>Supply:</h2>
-                    <p><%= content.supply %> <%= content.abbreviation %></p>
+                    <p><%= coin.supply %> <%= coin.abbreviation %></p>
                 </div>
                 <div id="dominance" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
                     <h2>Market Dominance:</h2>
-                    <p><%= content.volume %>%</p>
+                    <p><%= coin.volume %>%</p>
                 </div>
                 <div id="change24" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
                     <h2>Price Change (24h):</h2>
-                    <p>$<%= content.price %></p>
+                    <p>$<%= coin.price %></p>
                 </div>
             </div>
             <div id="coinDescription" class="mt-[20px]">
-                <h2 class="text-xl font-bold">About <%= content.name %>:</h2>
-                <p class="text-base">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+                <h2 class="text-xl font-bold">About <%= coin.name %>:</h2>
+                <p class="text-base"><%=coin.description%></p>
             </div>
         </div>
         <div id="favourites" class="w-[30%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
-            <h1 class="font-bold text-2xl">Favourites assets</h1>
-            <table class="table-auto w-full">
-                <thead>
-                    <tr>
-                        <td class="text-center">Status</td>
-                        <td>Name</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-center"><button><i class="fa fa-star"></i></button></td>
-                        <td>Oasis Network ($ROSE)</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h1 class="font-bold text-2xl">Favourite assets:</h1>
+                <table class="table-auto w-full">
+                    <thead>
+                        <tr>
+                            <td class="text-center">Status</td>
+                            <td>Name</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% favourites.forEach(function(favourite){%>
+                            <tr id="fav_<%=favourite.favourites_id%>">
+                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>')"><i class="fa fa-star"></i></button></td>
+                                <td><a href="../coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
+                            </tr>
+                        <%}); %>
+                    </tbody>
+                </table>
         </div>
     </div>
     </body>
