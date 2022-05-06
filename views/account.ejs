@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%-include("partials/header.ejs", {title:"Log In"}) %>
+    <div class="flex m-10 mx-30 border-2">
+        <div class="w-2/4 border-r-2 border-sky-800">
+            <div class="flex">
+                <i class="fa fa-bitcoin"></i>
+                <div>
+                    <h3>Define tu portfolio</h3>
+                    <p>Añade las criptomonedas que tengas para hacer un seguimiento de tus inversiones.</p>
+                    
+                </div>
+            </div>
+            <div class="flex">
+                <i class="fa fa-bitcoin"></i>
+                <div>
+                    <h3>Obtén información sobre los proyectos</h3>
+                    <p>Visualiza toda la información que desees sobre los proyectos de criptomonedas registrados en tiempo real.</p>
+                </div>
+            </div>
+            <div class="flex">
+                <i class="fa fa-bitcoin"></i>
+                <div>
+                    <h3>Añade tus favoritas</h3>
+                    <p>Crea una lista de tus criptomonedas favoritas para tenerlas más a mano.</p>
+                </div>
+            </div>
+        </div>
+        <%-include(form)%>
+    </div>
+</body>
+</html>
