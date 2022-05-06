@@ -97,16 +97,47 @@ async function addfav(favid) {
         coin_abbreviation = data[0].abbreviation
     });
 
-    const image = $("<img>").attr("src", "/img/fullstar.png")
-    image.attr("class", "max-w-[15px] max-h-[15px]")
+    // Creating the new row on favourites's table
+    const image = $("<img>").attr("src", "/img/fullstar.png").attr("class", "max-w-[15px] max-h-[15px]")
     const button = $("<button>").attr("onclick", "deletefav('"+favourite_id+"', true)").append(image)
     const td1= $("<td>").attr("class", "text-center").append(button)
-    const td2 = $("<td>").append($("<a>").attr("href", "../coin/"+coin_abbreviation).append($("<p>").text(coin_name + " ($" + coin_abbreviation + ")")))
-    const tr = $("<tr>").attr("id", tagId).append(td1)
-    tr.append(td2)
+    const td2 = $("<td>").append($("<a>").attr("href", "../coin/"+coin_abbreviation.toLowerCase()).append($("<p>").text(coin_name + " ($" + coin_abbreviation + ")")))
+    const tr = $("<tr>").attr("id", tagId).append(td1).append(td2)
     $("#favtable").append(tr)
     try {
         $("#favstar").attr("src", "/img/fullstar.png")
         $("#buttonfavstar").attr("onclick", "deletefav('"+favourite_id+"', true)")
     } catch (err) {}
+}
+
+async function createPortfolio() {
+    const newname= $("#newPortfolioName").val()
+    let portfolio_id
+    const query = 'INSERT INTO portfolios (user_id, name) VALUES ('+1+',"'+newname+'");' //TODO insertar user_id y no "1"
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: function(result){
+            portfolio_id = result.insertId; //this will alert you the last_id
+          }
+    });
+    window.location="../portfolio/"+portfolio_id
+}
+
+async function deletePortfolio(portfolio_id) {
+    const id = parseInt(portfolio_id)
+    let redirectedPortfolio
+    let query = 'DELETE FROM portfolios WHERE portfolio_id='+id+';'
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+    });
+    query = 'SELECT portfolio_id FROM portfolios WHERE user_id ='+1+';' //TODO insertar user_id y no "1"
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET"
+    }).done(function(data){
+        redirectedPortfolio = data[0].portfolio_id
+    });
+    window.location="../portfolio/"+redirectedPortfolio
 }

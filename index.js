@@ -15,6 +15,11 @@ app.set('view engine', 'ejs');
 app.get('/login', (req, res) => {
     res.render('loggin')
 })
+
+app.get('/createportfolio', (req, res) => {
+    res.render('newPortfolio')
+})
+
 app.get('/coin/:abb', async (req, res) => {
     // Getting the coin from url
     let coin = {}
@@ -78,6 +83,7 @@ app.get('/coin/:abb', async (req, res) => {
 
 app.get('/portfolio/:id', async (req, res) => {
     // All user's portfolios to print in the left list
+    const portfolio_id = req.params.id
     let portfolios = {}
     try {
         const query = 'SELECT * from portfolios where user_id = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
@@ -126,7 +132,7 @@ app.get('/portfolio/:id', async (req, res) => {
         console.error(err);
     }
 
-    res.render('portfolio', {portfolios, portfolio, favourites, assets})
+    res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id})
 })
 
 app.get('/consulta/:query', (req,res) =>{
