@@ -7,7 +7,6 @@ import {encriptar,desencriptar} from './public/javascripts/encriptar.js'
 import {consulta} from './public/javascripts/mysqlConector.js';
 
 const app = express();
-const port = 3001
 const __dirname = path.resolve();
 
 async function getAbbreviation(){
@@ -186,6 +185,6 @@ app.get('/CryptoDetApi/:url', (req, res) => {
     console.log(conection(url))
 })*/
 
-app.listen(port, () => {
+app.listen($PORT, () => {
   //console.log(`Example app listening on port ${port}`)
 })
