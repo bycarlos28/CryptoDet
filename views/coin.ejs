@@ -7,7 +7,7 @@
                 <div class="border-2 border-r-zinc-300 border-transparent pr-[15px] w-[40%]">
                     <div id="name" class="flex items-end">
                         <% if (isfavourite) { %>
-                            <button id="buttonfavstar" onclick="deletefav('<%=favourite_id%>'), true"><img id="favstar" src="/img/fullstar.png" class="max-w-[40px] max-h-[40px]"></button>
+                            <button id="buttonfavstar" onclick="deletefav('<%=favourite_id%>', true)"><img id="favstar" src="/img/fullstar.png" class="max-w-[40px] max-h-[40px]"></button>
                         <% } else { %>
                             <button id="buttonfavstar" onclick="addfav('<%=coin.coin_id%>')"><img id="favstar" src="/img/emptystar.png" class="max-w-[40px] max-h-[40px]"></button>
                         <% } %>
