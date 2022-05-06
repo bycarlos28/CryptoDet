@@ -112,11 +112,11 @@ app.use('/css', express.static(path.join(__dirname, 'public/stylesheets')))
 app.use('/img', express.static(path.join(__dirname, 'public/images')))
 app.set('view engine', 'ejs');
 
-/*
+
 app.get('/',(req, res) => {
     res.render('home')
 })
-
+/*
 app.get('/login',async(req, res) => {
     res.render('account',{ form : "partials/login.ejs" })
 })
