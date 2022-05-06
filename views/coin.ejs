@@ -6,6 +6,11 @@
             <div id="coinHeader" class="flex">
                 <div class="border-2 border-r-zinc-300 border-transparent pr-[15px] w-[40%]">
                     <div id="name" class="flex items-end">
+                        <% if (isfavourite) { %>
+                            <button id="buttonfavstar" onclick="deletefav('<%=favourite_id%>'), true"><img id="favstar" src="/img/fullstar.png" class="max-w-[40px] max-h-[40px]"></button>
+                        <% } else { %>
+                            <button id="buttonfavstar" onclick="addfav('<%=coin.coin_id%>')"><img id="favstar" src="/img/emptystar.png" class="max-w-[40px] max-h-[40px]"></button>
+                        <% } %>
                         <h1 class="font-bold text-4xl"><%= coin.name %></h1>
                         <h2 class="text-2xl ml-[20px] bg-[#FFC900] rounded-full p-[7px] pt-[3px] pb-[3px]">$<%= coin.abbreviation %></h2>
                     </div>
@@ -114,16 +119,14 @@
         <div id="favourites" class="w-[30%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
             <h1 class="font-bold text-2xl">Favourite assets:</h1>
                 <table class="table-auto w-full">
-                    <thead>
-                        <tr>
-                            <td class="text-center">Status</td>
-                            <td>Name</td>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <tbody id="favtable">
                         <% favourites.forEach(function(favourite){%>
                             <tr id="fav_<%=favourite.favourites_id%>">
-                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>')"><i class="fa fa-star"></i></button></td>
+                            <% if (favourite.coin_id == coin.coin_id ) { %>
+                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>', true)"><img class="max-w-[15px] max-h-[15px]" src="/img/fullstar.png"></button></td>
+                            <% } else { %>
+                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>', false)"><img class="max-w-[15px] max-h-[15px]" src="/img/fullstar.png"></button></td>
+                            <% } %>
                                 <td><a href="../coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
                             </tr>
                         <%}); %>

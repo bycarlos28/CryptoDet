@@ -64,7 +64,16 @@ app.get('/coin/:abb', async (req, res) => {
     catch (err) {
         console.error(err);
     }
-    res.render('coin', {coin, contracts, socials, favourites})
+
+    let isfavourite = false
+    let favourite_id
+    favourites.forEach(favourite => {
+        if (coin.coin_id == favourite.coin_id) {
+            isfavourite = true
+            favourite_id = favourite.favourites_id
+        }
+    });
+    res.render('coin', {coin, contracts, socials, favourites, isfavourite, favourite_id})
 })
 
 app.get('/portfolio/:id', async (req, res) => {

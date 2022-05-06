@@ -88,7 +88,7 @@
                     <tbody>
                         <% favourites.forEach(function(favourite){%>
                             <tr id="fav_<%=favourite.favourites_id%>">
-                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>')"><i class="fa fa-star"></i></button></td>
+                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>')"><img class="max-w-[15px] max-h-[15px]" src="/img/fullstar.png"></button></td>
                                 <td><a href="../coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
                             </tr>
                         <%}); %>
