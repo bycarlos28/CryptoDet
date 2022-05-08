@@ -65,7 +65,7 @@ async function getPrice(){
     }
     for(let y=0; y != coins_historicals.length; y++){
         let a = coins_historicals[y][1]
-        if(a == ""){
+        if(a == undefined){
         current_date = getDatetime()
         let prices_data = {
             [current_date]:  coins_price[y][1]
