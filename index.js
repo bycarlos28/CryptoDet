@@ -179,7 +179,7 @@ app.get('/consulta/:query', (req,res) =>{
         if(err) throw err
         res.json(result)
     })
-})
+})ba
 app.get('/CryptoDetApi/:url', (req, res) => {
     let url = req.params.url
     console.log(url)
