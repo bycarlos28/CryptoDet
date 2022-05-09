@@ -1,3 +1,5 @@
+import {consulta} from './mysqlConector.js';
+import {conection} from './apiConector.js'
 async function getAbbreviation(){
     let coins = []
     let datos = await consulta("select * from Coins;")

@@ -5,7 +5,7 @@ async function consulta(query) {
     connection.end()
     return rows
 }
-
+//host: 'eu-cdbr-west-02.cleardb.net', user: 'bbe3d30f13fe7c', password: '7f5d9623', database: 'heroku_8381c53b931a1c9'
 export {
     consulta
 }
