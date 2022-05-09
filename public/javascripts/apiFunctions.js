@@ -27,7 +27,6 @@ async function getPrices(){
     return coins_historicals
 }
 
-
 function getDatetime(){
     let current_date;
     let now = new Date()
