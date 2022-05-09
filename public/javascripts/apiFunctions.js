@@ -58,12 +58,12 @@ async function getPrice(){
         let prices_data = {
             [current_date]:  coins_price[y][1]
         }
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range = 1;")
+        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
         }else{
         current_date = getDatetime()
         let prices_json = JSON.parse(a)
         prices_json[current_date] = coins_price[y][1]
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range = 1;")
+        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
         }
     }
 }
@@ -87,12 +87,12 @@ async function getRange(){
         let prices_data = {
             [current_date]:  coins_price[y][1]
         }
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range = 7;")
+        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 7;")
         }else{
         current_date = getDatetime()
         let prices_json = JSON.parse(a)
         prices_json[current_date] = coins_price[y][1]
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range = 7;")
+        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 7;")
         }
     }
 }
