@@ -30,7 +30,9 @@ async function getPrices(){
 
 function getDatetime(){
     let current_date;
-    let now = new Date().toISOString().split('T');
+    let now = new Date()
+    now.setHours(now.getHours()+2); 
+    now = now.toISOString().split('T');
     current_date = now[0] +' '+ now[1].split('Z')[0]
     return current_date
 }
