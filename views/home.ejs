@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+        <%-include("partials/header.ejs", {title:"CryptoDet - Track your portfolio"}) %>
+        <script>
+            $( document ).ready(function() {
+                $('th').click(function(){
+                    var table = $(this).parents('table').eq(0)
+                    var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+                    this.asc = !this.asc
+                    if (!this.asc){rows = rows.reverse()}
+                    for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+                })
+                function comparer(index) {
+                    return function(a, b) {
+                        var valA = getCellValue(a, index), valB = getCellValue(b, index)
+                        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+                    }
+                }
+                function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
+            });
+            async function deletefavMain(favourite_id) {
+                let query = 'SELECT * FROM favourites WHERE favourites_id='+favourite_id+';' //TODO insertar user_id y no "1"
+                await $.ajax({
+                    url: "http://localhost:3001/consulta/"+query,
+                    method: "GET",
+                    success: function(result){
+                        coin_id = result[0].coin_id;
+                    }
+                });
+                query = 'DELETE FROM favourites WHERE favourites_id='+favourite_id+';'
+                await $.ajax({
+                    url: "http://localhost:3001/consulta/"+query,
+                    method: "GET"
+                });
+                $("#buttonfav_"+coin_id).attr("onclick", "addfavMain("+coin_id+")")
+                $("#favstar_"+coin_id).attr("src", "/img/emptystar.png")
+            }
+
+            async function addfavMain(coin_id){
+                const id = parseInt(coin_id)
+                let favourite_id
+                let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+1+','+id+');' //TODO insertar user_id y no "1"
+                await $.ajax({
+                    url: "http://localhost:3001/consulta/"+query,
+                    method: "GET",
+                    success: function(result){
+                        favourite_id = result.insertId; //this will alert you the last_id
+                    }
+                });
+                $("#buttonfav_"+coin_id).attr("onclick", "deletefavMain("+favourite_id+")")
+                $("#favstar_"+coin_id).attr("src", "/img/fullstar.png")
+            }
+        </script>
+        <style>
+            th {
+                cursor: pointer;
+            }
+        </style>
+        <div id="mainTable" class="pt-[20px] pl-[15%] pr-[15%] w-full">
+            <table class="w-full">
+                <tr height="40px">
+                    <th class="flex justify-center"><img class="max-w-[10px] max-h-[10px] mt-[35%]" src="/img/sortable.png"></th>
+                    <th><p class="text-xl">Logo</p></th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Name</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Price</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">24h %</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Market Cap</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Volume 24h</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Circulating Supply</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[5px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                </tr>
+                <% coins.forEach(function(coin){%>
+                    <tr height="50px" class="pl-[8px] pr-[8px] hover:bg-[#faf5b4] border-t-[1px] border-solid border-slate-300">
+                        <td class="min-w-[30px] text-center">
+                            <% if (favourites_ids.includes(coin.coin_id)) { %>
+                                <% favourites.forEach(function(favourite) { %>
+                                <% if (favourite.coin_id == coin.coin_id) { %>
+                                    <button id="buttonfav_<%=coin.coin_id%>" onclick="deletefavMain('<%=favourite.favourites_id%>')"><img id="favstar_<%=coin.coin_id%>" class="max-w-[15px] max-h-[15px]" src="/img/fullstar.png"></button>
+                                <% } %>
+                                <% }) %>
+                            <% } else { %>
+                                <button id="buttonfav_<%=coin.coin_id%>" onclick="addfavMain('<%=coin.coin_id%>')"><img id="favstar_<%=coin.coin_id%>" class="max-w-[15px] max-h-[15px]" src="/img/emptystar.png"></button>
+                            <% }; %>
+                        </td>
+                        <td class="flex justify-center">
+                            <img class="max-w-[30px] max-h-[30px] mt-[8px]" src="/img/currencies/<%= coin.abbreviation.toLowerCase() %>.png">
+                        </td>
+                        <td class="pl-[5%] text-lg">
+                            <a href="./coin/<%= coin.abbreviation.toLowerCase() %>" class="flex">
+                                <p class="font-bold"><%= coin.name %></p><p class="text-zinc-600">&nbsp&nbsp($<%= coin.abbreviation.toUpperCase() %>)</p>
+                            </a>
+                        </td>
+                        <td><%= coin.price %></td>
+                        <td><%= coin.percent_change_24h %></td>
+                        <td><%= coin.marketCap %></td>
+                        <td><%= coin.volume_24h %> (<%= coin.volume_change_24h %>%)</td>
+                        <td><%= coin.circulating_supply %></td>
+                    </tr>
+                <% }); %>
+            </table>
+        </div>
+    </body>
+</html>

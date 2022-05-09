@@ -16,16 +16,73 @@ app.get('/login', (req, res) => {
     res.render('loggin')
 })
 
+app.get('/', async (req, res) => {
+    let coins = {}
+    try {
+        const query = 'SELECT * FROM coins'
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            coins=response.data
+        })
+    } catch (err) {
+        console.error(err);
+    }
+    let favourites = {}
+    let favourites_ids = []
+    try {
+        const query = 'SELECT * FROM favourites WHERE user_id=1 = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            favourites=response.data
+        })
+        favourites.forEach(function(favourite){
+            favourites_ids.push(favourite.coin_id)
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
+    res.render('home', {coins, favourites, favourites_ids})
+})
+
 app.get('/createportfolio', (req, res) => {
     res.render('newPortfolio')
 })
+
+app.get('/addAsset/:portfolio_id', async (req, res) => {
+    const portfolio_id = req.params.portfolio_id
+    let coins = {}
+    try {
+        const query = 'SELECT * FROM coins'
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            coins=response.data
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
+    res.render('addAsset', {portfolio_id, coins})
+})
+
+app.get('/deleteportfolio/:id', async (req, res) => {
+    let portfolio = {}
+    try {
+        const query = 'SELECT * FROM portfolios WHERE portfolio_id='+req.params.id+';'
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            portfolio=response.data[0]
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
+    res.render('deletePortfolio',{portfolio})
+})
+
 
 app.get('/coin/:abb', async (req, res) => {
     // Getting the coin from url
     let coin = {}
     const abbreviation=req.params.abb.toUpperCase()
     try {
-        const query = 'SELECT * FROM coins WHERE coins.abbreviation="'+abbreviation+'";'
+        const query = 'SELECT * FROM coins WHERE abbreviation="'+abbreviation+'";'
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             coin=response.data[0]
         })
@@ -61,7 +118,7 @@ app.get('/coin/:abb', async (req, res) => {
     // Getting user's favourite coins
     let favourites = {}
     try {
-        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id=1 = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             favourites=response.data
         })
@@ -111,7 +168,7 @@ app.get('/portfolio/:id', async (req, res) => {
     // Getting user's favourite coins
     let favourites = {}
     try {
-        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id=1 = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             favourites=response.data
         })

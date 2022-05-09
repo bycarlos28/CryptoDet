@@ -21,7 +21,7 @@
                         <p class="ml-[10px] p-[2px] bg-lime-600 rounded-full">+10%</p>
                     </div>
                     <div>
-                        <button class="rounded-xl p-[4px] pt-[2px] bg-red-700 text-white" onclick="deletePortfolio('<%= portfolio_id %>')" rel="modal:open">Delete portfolio</button>
+                        <a class="rounded-xl p-[4px] pt-[2px] bg-red-700 text-white" href="../deleteportfolio/<%= portfolio_id %>" rel="modal:open">Delete portfolio</a>
                     </div>
                 </div>
                 <div id="chart" style="width: 100%;height:400px;">
@@ -59,7 +59,7 @@
                 <div id="yourAssets" class="pt-[20px]">
                     <div class="flex justify-between">
                         <h2 class="font-bold text-xl">Your assets:</h2>
-                        <button class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]" onclick="alert('Buy or sell')">+ Add asset</button>
+                        <a class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]" href="../addAsset/<%= portfolio_id %>" rel="modal:open">+ Add asset</a>
                     </div>
                     <table class="w-full ml-[20px] table-auto">
                         <thead>
@@ -76,7 +76,7 @@
                                     <td><a href="../coin/<%=asset.abbreviation.toLowerCase()%>"><%=asset.name%> ($<%=asset.abbreviation%>)</a></td>
                                     <td>(Precio ATR)$</td>
                                     <td><%=asset.amount%> <%=asset.abbreviation%></td>
-                                    <td>Precio * <%=asset.amount%>-<%=asset.spended%>$</td>
+                                    <td>(Precio * <%=asset.amount%>)-<%=asset.spended%>$</td>
                                 </tr>
                             <%}); %>
                         </tbody>

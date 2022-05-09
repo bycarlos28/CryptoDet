@@ -55,7 +55,7 @@ async function deletefav(favid, currentPage) {
         url: "http://localhost:3001/consulta/"+query,
         method: "GET",
         success: function(result){
-            coin_id = result[0].coin_id; //this will alert you the last_id
+            coin_id = result[0].coin_id;
           }
     });
     query = 'DELETE FROM favourites WHERE favourites_id='+id+';'
@@ -140,4 +140,78 @@ async function deletePortfolio(portfolio_id) {
         redirectedPortfolio = data[0].portfolio_id
     });
     window.location="../portfolio/"+redirectedPortfolio
+}
+
+async function addAsset(id){
+    const portfolio_id = parseInt(id)
+    const coin_id = parseInt($('#input_asset').val())
+    const quantity = parseFloat($('#asset_quantity').val())
+    const pxc = parseFloat($('#asset_pxc').val())
+    const spended = quantity*pxc
+    const tx_timestamp = $('#transaction_timestamp').val()
+    const tx_type = document.querySelector('input[name="transaction_type"]:checked').value
+    let valid_tx = false
+
+    query = 'SELECT * FROM assets WHERE portfolio_id='+id+' and coin_id='+coin_id+''
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: async function(result){
+            if (tx_type == "buy") {
+                if (result.length == 0) {
+                    query = 'INSERT INTO assets (portfolio_id, coin_id, amount, spended) VALUES ('+ portfolio_id + ', ' + coin_id + ', ' + quantity + ", " + spended + ");"
+                    await $.ajax({
+                        url: "http://localhost:3001/consulta/"+query,
+                        method: "GET",
+                    });
+                } else {
+                    totalAmount = result[0].amount + quantity
+                    totalSpended = result[0].spended + spended
+                    query = 'UPDATE assets SET amount='+totalAmount+', spended='+totalSpended+' WHERE assets_id='+result[0].assets_id+';'
+                    await $.ajax({
+                        url: "http://localhost:3001/consulta/"+query,
+                        method: "GET",
+                    });
+                }
+                valid_tx = true
+            } else {
+                if (result.length == 0 || result[0].amount < quantity) {
+                    query = 'SELECT name, abbreviation FROM coins WHERE coin_id='+coin_id+';'
+                    await $.ajax({
+                        url: "http://localhost:3001/consulta/"+query,
+                        method: "GET",
+                        success: function(result){
+                            coin_name = result[0].name;
+                            coin_abb = result[0].abbreviation
+                        }
+                    });
+                    if (result.length == 0) {
+                        alert("No tienes ningún "+coin_name+" ($" + coin_abb +") para vender!")
+                    } else {
+                        alert("Estás intentando vender más "+coin_name+" ($" + coin_abb +") de los que tienes!")
+                    }
+                } else {
+                    totalAmount = result[0].amount - quantity
+                    totalSpended = result[0].spended - spended
+                    query = 'UPDATE assets SET amount='+totalAmount+', spended='+totalSpended+' WHERE assets_id='+result[0].assets_id+';'
+                    await $.ajax({
+                        url: "http://localhost:3001/consulta/"+query,
+                        method: "GET",
+                    });
+                    valid_tx = true
+                }
+            }
+            if (valid_tx == true) {
+                query = 'INSERT INTO transactions (type, portfolio_id, coin_id, asset_price, tx_date, tx_amount) VALUES ("'+tx_type+'", '+ portfolio_id + ', '+coin_id+','+pxc+',"'+tx_timestamp+'",'+quantity+');'
+                await $.ajax({
+                    url: "http://localhost:3001/consulta/"+query,
+                    method: "GET",
+                    success: function(result){
+                        alert("Transaction ID: " + result.insertId)
+                    }
+                });
+            }
+        }
+    });
+
 }
