@@ -13,17 +13,17 @@ app.use(session({secret: 'estoeslaclavesecretaparaadministarsessiones'}));
 const port = process.env.PORT || 3000
 const __dirname = path.resolve();
 
-// cron.schedule("*/5 * * * *",async() =>{
-//     await getPrice()
-// })
+cron.schedule("*/5 * * * *",async() =>{
+    await getPrice()
+})
 
-// cron.schedule("*/15 * * * *",async() =>{
-//     await getRange()
-// })
+cron.schedule("*/15 * * * *",async() =>{
+    await getRange()
+})
 
-// cron.schedule("0 */12 * * *",async() =>{
-//     await getDataCoin()
-// })
+cron.schedule("0 */12 * * *",async() =>{
+    await getDataCoin()
+})
 
 
 app.use(bodyParser.urlencoded({extended: false}));
