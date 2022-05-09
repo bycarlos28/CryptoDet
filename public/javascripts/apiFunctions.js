@@ -11,7 +11,7 @@ async function getAbbreviation(){
 
 async function getCoinID(){
     let coins_id = []
-    let datos = await consulta("select coin_id from Coins;")
+    let datos = await consulta("select DISTINCT coin_id from Coins;")
     for(let i=0; i != datos.length; i++){
         coins_id.push(datos[i]['coin_id'])
     }
@@ -20,13 +20,21 @@ async function getCoinID(){
 
 async function getPrices(){
     let coins_historicals = []
-    let datos = await consulta("select coin_id, prices from Historicals;")
+    let datos = await consulta("select coin_id, prices from Historicals where range_days = 1;")
     for(let i=0; i != datos.length; i++){
         coins_historicals.push([datos[i]['coin_id'],datos[i]['prices']])
     }
     return coins_historicals
 }
-
+async function getPrices_7days(){
+    let coins_historicals = []
+    let datos = await consulta("select coin_id, prices, range_days from Historicals where range_days = 7;")
+    console.log(datos)
+    for(let i=0; i != datos.length; i++){
+        coins_historicals.push([datos[i]['coin_id'],datos[i]['prices'],datos[i]['range_days']])
+    }
+    return coins_historicals
+}
 
 function getDatetime(){
     let current_date;
@@ -72,8 +80,12 @@ async function getPrice(){
     }
 }
 async function getRange(){
-    let coins_historicals = await getPrices()
+    let market_data = {
+        'X-CW-API-Key': 'N2W10S4ODY0VXI716L8N'
+    }
+    let coins_id = getCoinID()
     let datos = await getAbbreviation()
+    let coins_historical_7day = await getPrices_7days()
     let coins_price = []
     let current_date;
 
@@ -84,21 +96,7 @@ async function getRange(){
         coins_price.push([datos[i][1], precio.result.price.last,current_date])
     }
 
-    for(let y=0; y != coins_historicals.length; y++){
-        let a = coins_historicals[y][1]
-        if(a == undefined){
-        current_date = getDatetime()
-        let prices_data = {
-            [current_date]:  coins_price[y][1]
-        }
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 7;")
-        }else{
-        current_date = getDatetime()
-        let prices_json = JSON.parse(a)
-        prices_json[current_date] = coins_price[y][1]
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 7;")
-        }
-    }
+
 }
 async function getDataCoin(){
     let coin_id = await getCoinID()
