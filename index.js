@@ -6,24 +6,24 @@ import cron from 'node-cron';
 import {conection} from './public/javascripts/apiConector.js'
 import {encriptar} from './public/javascripts/encriptar.js'
 import {consulta} from './public/javascripts/mysqlConector.js';
-import {getPrice,getRange,getDataCoin} from './public/javascripts/apiFunctions.js'
+import {getPrice,getDataCoin,getPrice_7days} from './public/javascripts/apiFunctions.js'
 
 const app = express();
 app.use(session({secret: 'estoeslaclavesecretaparaadministarsessiones'}));
 const port = process.env.PORT || 3000
 const __dirname = path.resolve();
 
-// cron.schedule("*/5 * * * *",async() =>{
-//     await getPrice()
-// })
+cron.schedule("*/5 * * * *",async() =>{
+    await getPrice()
+})
 
-// cron.schedule("*/15 * * * *",async() =>{
-//     await getRange()
-// })
+cron.schedule("*/15  * * * *",async() =>{
+    await getPrice_7days()
+})
 
-// cron.schedule("0 */12 * * *",async() =>{
-//     await getDataCoin()
-// })
+cron.schedule("*/720 * * * *",async() =>{
+    await getDataCoin()
+})
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use('/static', express.static(__dirname + '/public'));
@@ -68,7 +68,6 @@ app.post('/login',async(req, res) => {
             req.session.user_id = user[0].user_id;
             res.redirect('/')
         }else{
-            console.log('La contraseña no coincide')
             res.redirect('/register')
         }
     }
