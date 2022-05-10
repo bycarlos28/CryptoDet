@@ -17,6 +17,14 @@ async function getCoinID(){
     }
     return coins_id
 }
+async function getPortfolioID(){
+    let portfolio_id = []
+    let datos = await consulta("select portfolio_id from portfolios;")
+    for(let i=0; i != datos.length; i++){
+        portfolio_id.push(datos[i]['portfolio_id'])
+    }
+    return portfolio_id
+}
 
 async function getPrices(){
     let coins_historicals = []
@@ -130,16 +138,110 @@ async function getDataCoin(){
         let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id="+coin_id[i]
         let precio = await conection(url,coin_market_cap)
         current_date = getDatetime()
-        coins_data.push([coin_id[i],precio.data[coin_id[i]].circulating_supply,precio.data[coin_id[i]].max_supply,precio.data[coin_id[i]].quote.USD.market_cap,precio.data[coin_id[i]].quote.USD.market_cap_dominance,precio.data[coin_id[i]].total_supply,current_date])
+        coins_data.push([coin_id[i],precio.data[coin_id[i]].circulating_supply,precio.data[coin_id[i]].max_supply,precio.data[coin_id[i]].quote.USD.market_cap,precio.data[coin_id[i]].quote.USD.market_cap_dominance,precio.data[coin_id[i]].total_supply,current_date,precio.data[coin_id[i]].quote.USD.volume_change_24h])
     }
 
     for(let i=0; i != coins_data.length; i++){
-        let prices = await consulta("UPDATE Coins SET circulating_supply = "+coins_data[i][1]+", max_supply = "+coins_data[i][2]+", market_cap = "+coins_data[i][3]+", market_cap_dominance = "+coins_data[i][4]+", total_supply = "+coins_data[i][5]+", last_updated = '"+coins_data[i][6]+"' WHERE coin_id = "+coins_data[i][0]+";")
+        let prices = await consulta("UPDATE Coins SET circulating_supply = "+coins_data[i][1]+", max_supply = "+coins_data[i][2]+", market_cap = "+coins_data[i][3]+", market_cap_dominance = "+coins_data[i][4]+", total_supply = "+coins_data[i][5]+",volume_change_24h = "+coins_data[i][7]+", last_updated = '"+coins_data[i][6]+"' WHERE coin_id = "+coins_data[i][0]+";")
     }
 }
 
+async function getPortfolioPrices(){
+    let portfolio_prices = {}
+    let datos = await consulta("select portfolio_id, prices from historicals_portfolio where range_days = 1;")
+    for(let i=0; i != datos.length; i++){
+        portfolio_prices[datos[i]['portfolio_id']] = datos[i]['prices']
+    }
+    return portfolio_prices
+
+}
+
+async function getPortfolioPrices_7days(){
+    let portfolio_prices = {}
+    let datos = await consulta("select portfolio_id, prices from historicals_portfolio where range_days = 7;")
+    for(let i=0; i != datos.length; i++){
+        portfolio_prices[datos[i]['portfolio_id']] = datos[i]['prices']
+    }
+    return portfolio_prices
+
+}
+
+async function updatePortfolio(){
+    let portfolio_id = await getPortfolioID();
+    let coins = await consulta("select coin_id, price from coins");
+    let coins_price = {}
+    let current_date;
+    let portfolio_price = await getPortfolioPrices()
+    for(let i=0; i != coins.length; i++){
+        coins_price[coins[i].coin_id] = coins[i].price
+    }
+    
+    for(let i=0; i != portfolio_id.length; i++){
+        let assets = await consulta("select coin_id, amount from assets where portfolio_id = "+portfolio_id[i]);
+        if (assets.length != 0){
+            let precio_total = 0;
+            for(let e=0; e != assets.length; e++){
+                precio_total += coins_price[assets[e].coin_id] * assets[e].amount
+            }
+            if(portfolio_price[portfolio_id[i]] == null){
+                current_date = getDatetime()
+                let prices_data = {
+                    [current_date]:  precio_total
+                }
+                let prices = await consulta("UPDATE historicals_portfolio set prices = '"+JSON.stringify(prices_data)+"' where portfolio_id = "+portfolio_id[i]+" and range_days = 1");
+            }else{
+                let prices_data = JSON.parse(portfolio_price[portfolio_id[i]])
+                if(prices_data.length == 288){
+                    let first_key = Object.keys(prices_data)[0]
+                    delete prices_data[first_key]
+                }
+                current_date = getDatetime()
+                prices_data[current_date] = precio_total
+                let prices = await consulta("UPDATE historicals_portfolio set prices = '"+JSON.stringify(prices_data)+"' where portfolio_id = "+portfolio_id[i]+" and range_days = 1");
+            }
+        }
+    }
+}
+async function updatePortfolio_7days(){
+    let portfolio_id = await getPortfolioID();
+    let coins = await consulta("select coin_id, price from coins");
+    let coins_price = {}
+    let current_date;
+    let portfolio_price = await getPortfolioPrices_7days()
+    for(let i=0; i != coins.length; i++){
+        coins_price[coins[i].coin_id] = coins[i].price
+    }
+    
+    for(let i=0; i != portfolio_id.length; i++){
+        let assets = await consulta("select coin_id, amount from assets where portfolio_id = "+portfolio_id[i]);
+        if (assets.length != 0){
+            let precio_total = 0;
+            for(let e=0; e != assets.length; e++){
+                precio_total += coins_price[assets[e].coin_id] * assets[e].amount
+            }
+            if(portfolio_price[portfolio_id[i]] == null){
+                current_date = getDatetime()
+                let prices_data = {
+                    [current_date]:  precio_total
+                }
+                let prices = await consulta("UPDATE historicals_portfolio set prices = '"+JSON.stringify(prices_data)+"' where portfolio_id = "+portfolio_id[i]+" and range_days = 7");
+            }else{
+                let prices_data = JSON.parse(portfolio_price[portfolio_id[i]])
+                if(prices_data.length == 672){
+                    let first_key = Object.keys(prices_data)[0]
+                    delete prices_data[first_key]
+                }
+                current_date = getDatetime()
+                prices_data[current_date] = precio_total
+                let prices = await consulta("UPDATE historicals_portfolio set prices = '"+JSON.stringify(prices_data)+"' where portfolio_id = "+portfolio_id[i]+" and range_days = 7");
+            }
+        }
+    }
+}
 export{
     getPrice,
     getDataCoin,
-    getPrice_7days
+    getPrice_7days,
+    updatePortfolio,
+    updatePortfolio_7days
 }
