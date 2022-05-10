@@ -9,23 +9,23 @@ import {consulta} from './public/javascripts/mysqlConector.js';
 import {getPrice,getDataCoin,getPrice_7days,updatePortfolio,updatePortfolio_7days} from './public/javascripts/apiFunctions.js'
 
 const app = express();
-app.use(session({secret: 'estoeslaclavesecretaparaadministarsessiones'}));
+app.use(session({secret: 'estoeslaclavesecretaparaadministarsessiones', cookie: { maxAge: 60000 }}));
 const port = process.env.PORT || 3000
 const __dirname = path.resolve();
 
-// cron.schedule("*/5 * * * *",async() =>{
-//     await getPrice()
-//     await updatePortfolio()
-// })
+cron.schedule("*/5 * * * *",async() =>{
+    await getPrice()
+    await updatePortfolio()
+})
 
-// cron.schedule("*/15  * * * *",async() =>{
-//     await getPrice_7days()
-//     await updatePortfolio_7days()
-// })
+cron.schedule("*/15  * * * *",async() =>{
+    await getPrice_7days()
+    await updatePortfolio_7days()
+})
 
-// cron.schedule("*/720 * * * *",async() =>{
-//     await getDataCoin()
-// })
+cron.schedule("*/720 * * * *",async() =>{
+    await getDataCoin()
+})
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use('/static', express.static(__dirname + '/public'));
