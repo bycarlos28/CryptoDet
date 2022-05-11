@@ -47,7 +47,8 @@ app.get('/createportfolio', (req, res) => {
     res.render('newPortfolio')
 })
 
-app.get('/addAsset/:portfolio_id', async (req, res) => {
+app.get('/addAsset/:portfolio_id/:coin_id?', async (req, res) => {
+    const default_coin = req.params.coin_id ? req.params.coin_id : 1
     const portfolio_id = req.params.portfolio_id
     let coins = {}
     try {
@@ -59,7 +60,7 @@ app.get('/addAsset/:portfolio_id', async (req, res) => {
     catch (err) {
         console.error(err);
     }
-    res.render('addAsset', {portfolio_id, coins})
+    res.render('addAsset', {portfolio_id, coins, default_coin})
 })
 
 app.get('/deleteportfolio/:id', async (req, res) => {
@@ -74,6 +75,28 @@ app.get('/deleteportfolio/:id', async (req, res) => {
         console.error(err);
     }
     res.render('deletePortfolio',{portfolio})
+})
+
+app.get('/confirmdelete/:toDelete/:id', async (req, res) => {
+    const toDelete = req.params.toDelete
+    let dataToDelete
+    let query
+    if (toDelete == "portfolio") {
+        query = 'SELECT * FROM portfolios WHERE portfolio_id='+req.params.id+';'
+    } else if (toDelete == "asset") {
+        query = 'SELECT * FROM portfolios p INNER JOIN assets a ON p.portfolio_id = a.portfolio_id INNER JOIN coins c ON a.coin_id = c.coin_id WHERE a.coin_id='+req.params.id+';'
+    } else if (toDelete == "transaction") {
+        query = 'SELECT * FROM portfolios p INNER JOIN transactions t ON p.portfolio_id = t.portfolio_id INNER JOIN coins c ON t.coin_id = c.coin_id WHERE t.transaction_id='+req.params.id+';'
+    }
+    try {
+        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
+            dataToDelete=response.data[0]
+        })
+    }
+    catch (err) {
+        console.error(err);
+    }
+    res.render('confirmDelete',{dataToDelete, toDelete})
 })
 
 
@@ -180,7 +203,7 @@ app.get('/portfolio/:id', async (req, res) => {
     // Getting the assets from the portfolio we wanna show
     let assets = {}
     try {
-        const query = 'SELECT c.name, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.user_id='+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session and ADD columns price and profit/loss
+        const query = 'SELECT c.coin_id, c.name, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.user_id='+1+' and p.portfolio_id='+portfolio_id+';' // TODO: Cambiar el id de alumno por el obtenido desde session and ADD columns price and profit/loss
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             assets=response.data
         })

@@ -12,7 +12,7 @@
             <select name="asset" id="input_asset" class="border-2 border-solid pl-[5px] ml-[10px]">
                 <optgroup style="max-height: 65px;" label="">
                     <% coins.forEach(coin => { %>
-                        <% if (coin.coin_id==1) {%>
+                        <% if (coin.coin_id == default_coin) {%>
                             <option value="<%= coin.coin_id %>" selected><%= coin.name %> ($<%= coin.abbreviation %>)</option>
                         <% } else { %>
                             <option value="<%= coin.coin_id %>"><%= coin.name %> ($<%= coin.abbreviation %>)</option>

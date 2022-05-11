@@ -1,3 +1,7 @@
 .portfolio:hover {
     background-color: #fffccd;
 }
+
+.favourites_table tr:hover{
+    background-color: #fffccd;
+}

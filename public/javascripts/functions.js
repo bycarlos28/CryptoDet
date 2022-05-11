@@ -208,9 +208,70 @@ async function addAsset(id){
                     method: "GET",
                     success: function(result){
                         alert("Transaction ID: " + result.insertId)
+                        window.location="../portfolio/"+portfolio_id
                     }
                 });
             }
+        }
+    });
+
+}
+
+async function deleteAsset(portfolio_id, asset_id) {
+    query = 'DELETE FROM assets WHERE assets_id='+asset_id+';'
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: function(result){
+            alert("Asset deleted successfully")
+            window.location="../portfolio/"+portfolio_id
+        }
+    });
+}
+
+async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type) {
+    let transaction_data
+    let asset_data
+    query = 'SELECT * FROM transactions WHERE transaction_id='+transaction_id+';'
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: function(result){
+            transaction_data=result[0]
+        }
+    });
+    query = 'SELECT * FROM assets WHERE portfolio_id='+portfolio_id+' and coin_id='+coin_id+';'
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: function(result){
+            asset_data=result[0]
+        }
+    });
+    let totalAmount
+    let totalSpended
+    if (tx_type == "buy") {
+        totalAmount = asset_data.amount-(transaction_data.tx_amount)
+        totalSpended = asset_data.spended-(transaction_data.tx_amount*transaction_data.asset_price)
+    } else if (tx_type == "sell") {
+        totalAmount = asset_data.amount+(transaction_data.tx_amount)
+        totalSpended = asset_data.spended+(transaction_data.tx_amount*transaction_data.asset_price)
+    }
+    query = 'UPDATE assets SET amount='+totalAmount+', spended='+totalSpended+' WHERE portfolio_id='+portfolio_id+' and coin_id='+coin_id+';'
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: function(result){
+            alert("Asset updated successfully")
+        }
+    });
+    query = 'DELETE FROM transactions WHERE transaction_id='+transaction_id+';'
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: function(result){
+            alert("Transaction deleted successfully")
+            window.location="../portfolio/"+portfolio_id // better delete the row and not redirect the url
         }
     });
 
