@@ -19,7 +19,7 @@ app.get('/login', (req, res) => {
 app.get('/', async (req, res) => {
     let coins = {}
     try {
-        const query = 'SELECT * FROM coins'
+        const query = 'SELECT * FROM coins ORDER BY price'
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             coins=response.data
         })
@@ -29,7 +29,7 @@ app.get('/', async (req, res) => {
     let favourites = {}
     let favourites_ids = []
     try {
-        const query = 'SELECT * FROM favourites WHERE user_id=1 = '+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        const query = 'SELECT * FROM favourites WHERE user_id='+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             favourites=response.data
         })
@@ -52,7 +52,7 @@ app.get('/addAsset/:portfolio_id/:coin_id?', async (req, res) => {
     const portfolio_id = req.params.portfolio_id
     let coins = {}
     try {
-        const query = 'SELECT * FROM coins'
+        const query = 'SELECT * FROM coins ORDER BY name'
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             coins=response.data
         })
@@ -61,20 +61,6 @@ app.get('/addAsset/:portfolio_id/:coin_id?', async (req, res) => {
         console.error(err);
     }
     res.render('addAsset', {portfolio_id, coins, default_coin})
-})
-
-app.get('/deleteportfolio/:id', async (req, res) => {
-    let portfolio = {}
-    try {
-        const query = 'SELECT * FROM portfolios WHERE portfolio_id='+req.params.id+';'
-        await axios.get('http://localhost:3001/consulta/'+query).then(response => {
-            portfolio=response.data[0]
-        })
-    }
-    catch (err) {
-        console.error(err);
-    }
-    res.render('deletePortfolio',{portfolio})
 })
 
 app.get('/confirmdelete/:toDelete/:id', async (req, res) => {
@@ -141,7 +127,7 @@ app.get('/coin/:abb', async (req, res) => {
     // Getting user's favourite coins
     let favourites = {}
     try {
-        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+1+' ORDER BY c.name;' // TODO: Cambiar el id de alumno por el obtenido desde session
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             favourites=response.data
         })
@@ -191,7 +177,7 @@ app.get('/portfolio/:id', async (req, res) => {
     // Getting user's favourite coins
     let favourites = {}
     try {
-        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+1+';' // TODO: Cambiar el id de alumno por el obtenido desde session
+        const query = 'SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+1+' ORDER BY c.name;' // TODO: Cambiar el id de alumno por el obtenido desde session
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             favourites=response.data
         })
@@ -203,7 +189,7 @@ app.get('/portfolio/:id', async (req, res) => {
     // Getting the assets from the portfolio we wanna show
     let assets = {}
     try {
-        const query = 'SELECT c.coin_id, c.name, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.user_id='+1+' and p.portfolio_id='+portfolio_id+';' // TODO: Cambiar el id de alumno por el obtenido desde session and ADD columns price and profit/loss
+        const query = 'SELECT c.coin_id, c.name, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.portfolio_id='+portfolio_id+';'
         await axios.get('http://localhost:3001/consulta/'+query).then(response => {
             assets=response.data
         })
