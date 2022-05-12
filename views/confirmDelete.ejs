@@ -1,0 +1,16 @@
+<div id="modalwindow">
+    <h1 class="font-bold">Are you sure to delete the <%= toDelete %>
+        <% if (toDelete != "transaction") { %>
+            :  "<%= dataToDelete.name %>"
+        <% } %>?
+    </h1>
+    <div class="flex justify-center">
+        <% if (toDelete == "portfolio") { %>
+            <button onclick="deletePortfolio('<%= dataToDelete.portfolio_id %>')" class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]">Yes, I am sure</button>
+        <% } else if (toDelete == "asset") {%>
+            <button onclick="deleteAsset('<%= dataToDelete.portfolio_id %>', '<%= dataToDelete.assets_id%>')" class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]">Yes, I am sure</button>
+        <% } else if (toDelete == "transaction") {%>
+            <button onclick="deleteTransaction('<%= dataToDelete.portfolio_id %>', '<%= dataToDelete.coin_id %>', '<%= dataToDelete.transaction_id %>', '<%= dataToDelete.type %>')" class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]">Yes, I am sure</button>
+        <% } %>
+    </div>
+</div>

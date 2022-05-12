@@ -1,119 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/css/style.css" rel="stylesheet" type="text/css">
-        <script src="/js/jquery-3.6.0.js"></script>
-        <script src="/js/functions.js"></script>
-        <script src="/js/echarts.js"></script>
-        <link rel="shortcut icon" href="#">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <title>Home</title>
-    </head>
-    <body class="bg-[#FFF89A]">
-        <header class="bg-gradient-to-b from-[#36677A] to-[#1A5F7A] flex justify-between">
-            <div id="logo" class="ml-[10%] mt-[20px] mb-[20px]">
-                <a href="./index.html"><img class="max-w-xs max-h-xs" src="./img/logo/logoAmarillo.png"></a>
-            </div>
-            <div id="userExp" class="flex mr-[10%] items-center">
-                <img class="max-w-[40px] max-h-[40px] mr-[20px]" src="./img/anonuser.png">
-                <form>
-                    <input class="max-w-[200px] max-h-[40px] mt-[20px]" type="text" placeholder="Search...">
-                    <button type="submit" class="pt-[10px]"><i class="fa fa-search"></i></button>
-                </form>
-            </div>
-        </header>
-        <div id="content" class="flex">
-            <div id="portfolios" class="w-[20%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
-                <h1 class="font-bold text-2xl">Your portfolios:</h1>
-                <ul class="ml-[20px]" id="portfoliosList">
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 1</p></li>
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 2</p></li>
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 3</p></li>
-                    <li><p class="portfolio text-lg max-w-[80%]">Portfolio 4</p></li>
-                </ul>
-            </div>
+        <%-include("partials/header.ejs", {title:"CryptoDet - Track your portfolio"}) %>
+        <script>
+            $( document ).ready(function() {
+                $('th').click(function(){
+                    var table = $(this).parents('table').eq(0)
+                    var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+                    this.asc = !this.asc
+                    if (!this.asc){rows = rows.reverse()}
+                    for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+                })
+                function comparer(index) {
+                    return function(a, b) {
+                        var valA = getCellValue(a, index), valB = getCellValue(b, index)
+                        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+                    }
+                }
+                function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
+            });
+            async function deletefavMain(favourite_id) {
+                let query = 'SELECT * FROM favourites WHERE favourites_id='+favourite_id+';' //TODO insertar user_id y no "1"
+                await $.ajax({
+                    url: "http://localhost:3001/consulta/"+query,
+                    method: "GET",
+                    success: function(result){
+                        coin_id = result[0].coin_id;
+                    }
+                });
+                query = 'DELETE FROM favourites WHERE favourites_id='+favourite_id+';'
+                await $.ajax({
+                    url: "http://localhost:3001/consulta/"+query,
+                    method: "GET"
+                });
+                $("#buttonfav_"+coin_id).attr("onclick", "addfavMain("+coin_id+")")
+                $("#favstar_"+coin_id).attr("src", "/img/emptystar.png")
+            }
 
-            <div id="portfolios" class="w-[50%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
-                <div id="title" class="flex">
-                    <h1 class="font-bold text-2xl">Portfolio 1: 100$</h1>
-                    <p class="ml-[10px] p-[2px] bg-lime-600 rounded-full">+10%</p>
-                </div>
-                <div id="chart" style="width: 100%;height:400px;">
-                    <script type="text/javascript">
-                        // Initialize the echarts instance based on the prepared dom
-                        var myChart = echarts.init(document.getElementById('chart'));
-                
-                        // Specify the configuration items and data for the chart
-                        var option = {
-                        title: {
-                            text: 'ECharts Getting Started'
-                        },
-                        tooltip: {},
-                        legend: {
-                            data: ['sales']
-                        },
-                        xAxis: {
-                            data: ['Shirts', 'Cardigans', 'Chiffons', 'Pants', 'Heels', 'Socks']
-                        },
-                        yAxis: {},
-                        series: [
-                            {
-                            name: 'sales',
-                            type: 'bar',
-                            data: [5, 20, 36, 10, 10, 20]
-                            }
-                        ]
-                        };
-                
-                        // Display the chart using the configuration items and data just specified.
-                        myChart.setOption(option);
-                    </script>
-                </div>
-                <hr>
-                <div id="yourAssets" class="pt-[20px]">
-                    <h2 class="font-bold text-xl">Your assets</h2>
-                    <table class="w-full ml-[20px] table-auto">
-                        <thead>
-                            <tr class="hover:bg-[#fffbb8]">
-                                <td>Name</td>
-                                <td>Price</td>
-                                <td>Holdings</td>
-                                <td>Profit/Loss</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="hover:bg-[#fffbb8]">
-                                <td>Oasis Network ($ROSE)</td>
-                                <td>0.21$</td>
-                                <td>6000 ROSE</td>
-                                <td>+150$</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <div id="favourites" class="w-[30%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
-                <h1 class="font-bold text-2xl">Favourites assets</h1>
-                <table class="table-auto w-full">
-                    <thead>
-                        <tr>
-                            <td class="text-center">Status</td>
-                            <td>Name</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="text-center"><button><i class="fa fa-star"></i></button></td>
-                            <td>Oasis Network ($ROSE)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            async function addfavMain(coin_id){
+                const id = parseInt(coin_id)
+                let favourite_id
+                let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+1+','+id+');' //TODO insertar user_id y no "1"
+                await $.ajax({
+                    url: "http://localhost:3001/consulta/"+query,
+                    method: "GET",
+                    success: function(result){
+                        favourite_id = result.insertId; //this will alert you the last_id
+                    }
+                });
+                $("#buttonfav_"+coin_id).attr("onclick", "deletefavMain("+favourite_id+")")
+                $("#favstar_"+coin_id).attr("src", "/img/fullstar.png")
+            }
+        </script>
+        <style>
+            th {
+                cursor: pointer;
+            }
+        </style>
+        <div id="mainTable" class="pt-[20px] pl-[15%] pr-[15%] w-full">
+            <table class="w-full">
+                <tr height="40px">
+                    <th class="flex justify-center"><img class="max-w-[10px] max-h-[10px] mt-[35%]" src="/img/sortable.png"></th>
+                    <th><p class="text-xl">Logo</p></th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Name</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Price</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">24h %</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Market Cap</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Volume 24h</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="flex items-center justify-center">
+                            <p class="text-xl">Circulating Supply</p>
+                            <img class="max-w-[10px] max-h-[10px] ml-[5px] mt-[5px]" src="/img/sortable.png">
+                        </div>
+                    </th>
+                </tr>
+                <% coins.forEach(function(coin){%>
+                    <tr height="50px" class="pl-[8px] pr-[8px] hover:bg-[#faf5b4] border-t-[1px] border-solid border-slate-300">
+                        <td class="min-w-[30px] text-center">
+                            <% if (favourites_ids.includes(coin.coin_id)) { %>
+                                <% favourites.forEach(function(favourite) { %>
+                                <% if (favourite.coin_id == coin.coin_id) { %>
+                                    <button id="buttonfav_<%=coin.coin_id%>" onclick="deletefavMain('<%=favourite.favourites_id%>')"><img id="favstar_<%=coin.coin_id%>" class="max-w-[15px] max-h-[15px]" src="/img/fullstar.png"></button>
+                                <% } %>
+                                <% }) %>
+                            <% } else { %>
+                                <button id="buttonfav_<%=coin.coin_id%>" onclick="addfavMain('<%=coin.coin_id%>')"><img id="favstar_<%=coin.coin_id%>" class="max-w-[15px] max-h-[15px]" src="/img/emptystar.png"></button>
+                            <% }; %>
+                        </td>
+                        <td class="flex justify-center">
+                            <img class="max-w-[30px] max-h-[30px] mt-[8px]" src="/img/currencies/<%= coin.abbreviation.toLowerCase() %>.png">
+                        </td>
+                        <td class="pl-[5%] text-lg">
+                            <a href="./coin/<%= coin.abbreviation.toLowerCase() %>" class="flex">
+                                <p class="font-bold"><%= coin.name %></p><p class="text-zinc-600">&nbsp&nbsp($<%= coin.abbreviation.toUpperCase() %>)</p>
+                            </a>
+                        </td>
+                        <td><%= coin.price %></td>
+                        <td><%= coin.percent_change_24h %></td>
+                        <td><%= coin.marketCap %></td>
+                        <td><%= coin.volume_24h %> (<%= coin.volume_change_24h %>%)</td>
+                        <td><%= coin.circulating_supply %></td>
+                    </tr>
+                <% }); %>
+            </table>
         </div>
     </body>
 </html>
