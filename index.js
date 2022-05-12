@@ -121,11 +121,11 @@ app.get('/consulta/:query', (req,res) =>{
         res.json(result)
     })
 })
-app.get('/CryptoDetApi/:url', (req, res) => {
-    let url = req.params.url
-    console.log(url)
-    console.log(conection(url))
-})
+// app.get('/CryptoDetApi/:url', (req, res) => {
+//     let url = req.params.url
+//     console.log(url)
+//     console.log(conection(url))
+// })
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
