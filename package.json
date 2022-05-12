@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js"
   },
@@ -12,12 +13,14 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
-    "echarts": "^5.3.2",
+    "body-parser": "^1.20.0",
+    "crypto-js": "^4.1.1",
     "ejs": "^3.1.7",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
-    "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
-    "nodemon": "^2.0.15"
+    "node-cron": "^3.0.0",
+    "nodemon": "^2.0.15",
+    "path": "^0.12.7"
   }
 }

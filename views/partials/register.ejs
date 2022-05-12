@@ -1,0 +1,28 @@
+<div class="w-2/4 border-l-2 border-sky-800  flex justify-center items-center flex-col">
+    <h2>Registra Cuenta</h2>
+    <div id="form">
+    <form class="flex flex-col" action="register" method="post">
+        <p>Nombre de usuario</p>
+        <input type="text" id="username" name="username" required>
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_username != 'undefined') { %>
+                <p><%= context.msg_username %></p>
+            <% } %>
+        <% } %>
+        <p>Correo electronico</p>
+        <input type="email" id="email" name="email" required>
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_email != 'undefined') { %>
+                <p><%= context.msg_email %></p>
+            <% } %>
+        <% } %>
+        <p>Fecha de nacimiento</p>
+        <input type="date" id="birth_date" name="birth_date" required>
+        <p>Contraseña</p>
+        <input type="password" id="password" name="password" required>
+        <p>Repite la contraseña</p>
+        <input type="password" id="password2" name="password2" required>
+        <input id="enviar" type="submit" value="enviar">
+    </form>
+    </div>
+</div>

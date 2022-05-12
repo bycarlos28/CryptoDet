@@ -1,0 +1,21 @@
+<div class="w-2/4 border-l-2 border-sky-800  flex justify-center items-center flex-col">
+    <h2>Inicia Session</h2>
+    <form class="flex flex-col" method="post">
+        <p>Nombre de usuario</p>
+        <input type="text" name="username">
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_username != 'undefined') { %>
+                <p><%= context.msg_username %></p>
+            <% } %>
+        <% } %>
+        <p>Contraseña</p>
+        <input type="password" name="password">
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_password != 'undefined') { %>
+                <p><%= context.msg_password %></p>
+            <% } %>
+        <% } %>
+        <input type="submit" value="enviar">
+    </form>
+    <a href="/register">Crear Cuenta</a>
+</div>

@@ -1,19 +1,19 @@
 import axios from 'axios';
-async function conection(url){
-    let response = null;
+
+let response = null;
+async function conection(url,header){
     try {
         response = await axios.get(url, {
-            headers: {
-                'X-CMC_PRO_API_KEY': '41282c59-9765-43a1-8754-447f88ed4f5c',
-            },
+            headers: header,
         });
     } catch(ex) {
         response = null;
-        // error
+        // errorx
     }
     if (response) {
         // success
-        const json = response.data.result;
+        //console.log(response)
+        const json = response.data;
         return json
     }
 }

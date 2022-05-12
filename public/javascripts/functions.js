@@ -1,6 +1,13 @@
-// var axios = require('axios')
-
 $( document ).ready(function() {
+    $('#enviar').click(function(event) {
+        if (validar_passwords() == true){
+            console.log('hola')
+        }else{
+            $('#form').append('<div id="msg_password"><p>Las Contraseñas no coinciden </p></div>')
+            event.preventDefault()
+        }
+      });
+  
     // Do a query in coin that return list of <name (abbreviation)>s    
     const query = 'SELECT name, abbreviation FROM coins;'
     var availableTags = []
@@ -35,6 +42,12 @@ $( document ).ready(function() {
         } catch (err) {}
      });
 });
+
+function validar_passwords(){
+    let password = $('#password').val();
+    let password2 = $('#password2').val();
+    return password == password2
+}
 
 function copyElementText(id) {
     var text = document.getElementById(id).innerText;
@@ -282,5 +295,4 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
             window.location="../portfolio/"+portfolio_id // better delete the row and not redirect the url
         }
     });
-
 }
