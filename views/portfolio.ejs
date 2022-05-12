@@ -46,7 +46,7 @@
                     '<td><p>'+element.type+'</p></td>'+
                     '<td><p>'+element.asset_price+'</p></td>'+
                     '<td>'+element.tx_amount+'</td>'+
-                    '<td><p>'+(element.asset_price*element.tx_amount)+'</p></td>'+
+                    '<td><p>'+(element.asset_price*element.tx_amount).toFixed(2)+'</p></td>'+
                     '<td>'+treatedDate+'</td>'+
                     '<td class="flex justify-center"><a href="../confirmdelete/transaction/'+element.transaction_id+'" rel="modal:open"><img class="max-w-[17px] max-h-[17px] mr-[10px]" src="/img/delete_black.png"></a></td>'+
                 '</tr>'

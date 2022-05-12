@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$( document ).ready(function() {
     $('#enviar').click(function(event) {
         if (validar_passwords() == true){
             console.log('hola')
@@ -7,7 +7,7 @@ $(document).ready(function() {
             event.preventDefault()
         }
       });
-
+  
     // Do a query in coin that return list of <name (abbreviation)>s    
     const query = 'SELECT name, abbreviation FROM coins;'
     var availableTags = []
@@ -42,11 +42,13 @@ $(document).ready(function() {
         } catch (err) {}
      });
 });
+
 function validar_passwords(){
     let password = $('#password').val();
     let password2 = $('#password2').val();
     return password == password2
 }
+
 function copyElementText(id) {
     var text = document.getElementById(id).innerText;
     var elem = document.createElement("textarea");
@@ -158,7 +160,7 @@ async function addAsset(id){
     const coin_id = parseInt($('#input_asset').val())
     const quantity = parseFloat($('#asset_quantity').val())
     const pxc = parseFloat($('#asset_pxc').val())
-    const spended = quantity*pxc
+    const spended = (quantity*pxc).toFixed(2)
     const tx_timestamp = $('#transaction_timestamp').val()
     const tx_type = document.querySelector('input[name="transaction_type"]:checked').value
     let valid_tx = false
@@ -228,7 +230,15 @@ async function addAsset(id){
 
 }
 
-async function deleteAsset(portfolio_id, asset_id) {
+async function deleteAsset(portfolio_id, coin_id, asset_id) {
+    query = 'DELETE FROM transactions WHERE coin_id='+coin_id+' and portfolio_id='+portfolio_id+';'
+    await $.ajax({
+        url: "http://localhost:3001/consulta/"+query,
+        method: "GET",
+        success: function(result){
+            console.log("All transactions from coin: " +coin_id+ " have been deleted.")
+        }
+    });
     query = 'DELETE FROM assets WHERE assets_id='+asset_id+';'
     await $.ajax({
         url: "http://localhost:3001/consulta/"+query,
@@ -263,10 +273,10 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
     let totalSpended
     if (tx_type == "buy") {
         totalAmount = asset_data.amount-(transaction_data.tx_amount)
-        totalSpended = asset_data.spended-(transaction_data.tx_amount*transaction_data.asset_price)
+        totalSpended = asset_data.spended-((transaction_data.tx_amount*transaction_data.asset_price).toFixed(2))
     } else if (tx_type == "sell") {
         totalAmount = asset_data.amount+(transaction_data.tx_amount)
-        totalSpended = asset_data.spended+(transaction_data.tx_amount*transaction_data.asset_price)
+        totalSpended = asset_data.spended+((transaction_data.tx_amount*transaction_data.asset_price).toFixed(2))
     }
     query = 'UPDATE assets SET amount='+totalAmount+', spended='+totalSpended+' WHERE portfolio_id='+portfolio_id+' and coin_id='+coin_id+';'
     await $.ajax({
