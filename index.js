@@ -13,19 +13,19 @@ app.use(session({secret: 'estoeslaclavesecretaparaadministarsessiones', cookie: 
 const port = process.env.PORT || 3000
 const __dirname = path.resolve();
 
-cron.schedule("*/5 * * * *",async() =>{
-    await getPrice()
-    await updatePortfolio()
-})
+// cron.schedule("*/5 * * * *",async() =>{
+//     await getPrice()
+//     await updatePortfolio()
+// })
 
-cron.schedule("*/15  * * * *",async() =>{
-    await getPrice_7days()
-    await updatePortfolio_7days()
-})
+// cron.schedule("*/15  * * * *",async() =>{
+//     await getPrice_7days()
+//     await updatePortfolio_7days()
+// })
 
-cron.schedule("*/720 * * * *",async() =>{
-    await getDataCoin()
-})
+// cron.schedule("*/720 * * * *",async() =>{
+//     await getDataCoin()
+// })
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use('/static', express.static(__dirname + '/public'));
@@ -61,16 +61,20 @@ app.post('/login',async(req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     let user = await consulta("Select * from Users where username like '"+username+"';");
+    let context= {}
+    let msg_username = "El usuario"+username+" no existe";
+    let msg_password = "La contraseña introducida es incorrecta"
     if(user.length == 0){
-        console.log('EL nombre de usuario es incorrecto')
-        res.redirect('/register')
+        context['msg_username'] = msg_username
+        res.render('account',{ form : "partials/login.ejs",context})
     }else{
         if(encriptar(password) == user[0].password){
             req.session.user = username;
             req.session.user_id = user[0].user_id;
             res.redirect('/')
         }else{
-            res.redirect('/register')
+            context['msg_password'] = msg_password
+            res.render('account',{ form : "partials/login.ejs",context})
         }
     }
 })
@@ -86,14 +90,24 @@ app.post('/register',async(req, res) => {
     let password =  encriptar(req.body.password);
     let users = await consulta("Select * from Users where username like '"+username+"';");
     let emaìls = await consulta("Select * from Users where email like '"+email+"';");
+    let msg_username = "El nombre de usuario "+username+" ya esta en uso"
+    let msg_email = "El correo electronico "+email+" ya esta en uso"
+    let context= {}
+    let validar = true
     if(users.length != 0){
-        res.redirect('/register')
+        context['msg_username'] = msg_username
+        validar = false
     }
     if(emaìls.length != 0){
-        res.redirect('/register')
+        context['msg_email'] = msg_email
+        validar = false
     }
-    let register_user = await consulta("Insert into Users (username,email,password,birth_date) values ('"+username+"','"+email+"','"+password+"','"+birth_date+"');");
-    res.redirect('/login')
+    if(validar == false){
+        res.render('account',{ form : "partials/register.ejs",context})
+    }else{
+        let register_user = await consulta("Insert into Users (username,email,password,birth_date) values ('"+username+"','"+email+"','"+password+"','"+birth_date+"');");
+        res.redirect('/login')
+    }
 })
 
 app.get('/logout',auth_destroy,(req, res) => {

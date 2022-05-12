@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%-include("partials/header.ejs", {title:"Log In"}) %>
+    <%-include("partials/header.ejs", {title:"Account"}) %>
     <div class="flex m-10 mx-30 border-2">
         <div class="w-2/4 border-r-2 border-sky-800">
             <div class="flex">
@@ -26,7 +26,11 @@
                 </div>
             </div>
         </div>
-        <%-include(form)%>
+        <% if(typeof context != 'undefined'){ %>
+            <%-include(form,context)%>
+        <% } else{ %>  
+            <%-include(form)%>
+        <% } %>
     </div>
 </body>
 </html>
