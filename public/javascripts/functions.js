@@ -6,13 +6,12 @@ $( document ).ready(function() {
             $('#form').append('<div id="msg_password"><p>Las Contraseñas no coinciden </p></div>')
             event.preventDefault()
         }
-      });
-  
+    });
     // Do a query in coin that return list of <name (abbreviation)>s    
     const query = 'SELECT name, abbreviation FROM coins;'
     var availableTags = []
     $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET"
     }).done(function(data){
         for(let i=0; i != data.length; i++){
@@ -40,7 +39,7 @@ $( document ).ready(function() {
             value =$("#input_searcher").val().split("(")[1].slice(0,-1).toLowerCase()
             $("#searcher").attr('action',"../coin/"+value);
         } catch (err) {}
-     });
+    });
 });
 
 function validar_passwords(){
@@ -65,11 +64,11 @@ async function deletefav(favid, currentPage) {
     let coin_id
     let query = 'SELECT * FROM favourites WHERE favourites_id='+id+';' //TODO insertar user_id y no "1"
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             coin_id = result[0].coin_id;
-          }
+        }
     });
     query = 'DELETE FROM favourites WHERE favourites_id='+id+';'
     await $.ajax({
@@ -93,16 +92,16 @@ async function addfav(favid) {
     let favourite_id
     let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+1+','+id+');' //TODO insertar user_id y no "1"
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             favourite_id = result.insertId; //this will alert you the last_id
-          }
+        }
     });
     const tagId = 'fav_'+favourite_id.toString()
     query = 'SELECT * FROM coins WHERE coin_id = '+id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET"
     }).done(function(data){
         coin_id = data[0].coin_id
@@ -128,11 +127,11 @@ async function createPortfolio() {
     let portfolio_id
     const query = 'INSERT INTO portfolios (user_id, name) VALUES ('+1+',"'+newname+'");' //TODO insertar user_id y no "1"
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             portfolio_id = result.insertId; //this will alert you the last_id
-          }
+        }
     });
     window.location="../portfolio/"+portfolio_id
 }
@@ -142,12 +141,12 @@ async function deletePortfolio(portfolio_id) {
     let redirectedPortfolio
     let query = 'DELETE FROM portfolios WHERE portfolio_id='+id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
     });
     query = 'SELECT portfolio_id FROM portfolios WHERE user_id ='+1+';' //TODO insertar user_id y no "1"
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET"
     }).done(function(data){
         redirectedPortfolio = data[0].portfolio_id
@@ -167,7 +166,7 @@ async function addAsset(id){
 
     query = 'SELECT * FROM assets WHERE portfolio_id='+id+' and coin_id='+coin_id+''
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: async function(result){
             if (tx_type == "buy") {
@@ -182,7 +181,7 @@ async function addAsset(id){
                     totalSpended = result[0].spended + spended
                     query = 'UPDATE assets SET amount='+totalAmount+', spended='+totalSpended+' WHERE assets_id='+result[0].assets_id+';'
                     await $.ajax({
-                        url: "http://localhost:3001/consulta/"+query,
+                        url: "/consulta/"+query,
                         method: "GET",
                     });
                 }
@@ -191,7 +190,7 @@ async function addAsset(id){
                 if (result.length == 0 || result[0].amount < quantity) {
                     query = 'SELECT name, abbreviation FROM coins WHERE coin_id='+coin_id+';'
                     await $.ajax({
-                        url: "http://localhost:3001/consulta/"+query,
+                        url: "/consulta/"+query,
                         method: "GET",
                         success: function(result){
                             coin_name = result[0].name;
@@ -208,7 +207,7 @@ async function addAsset(id){
                     totalSpended = result[0].spended - spended
                     query = 'UPDATE assets SET amount='+totalAmount+', spended='+totalSpended+' WHERE assets_id='+result[0].assets_id+';'
                     await $.ajax({
-                        url: "http://localhost:3001/consulta/"+query,
+                        url: "/consulta/"+query,
                         method: "GET",
                     });
                     valid_tx = true
@@ -217,7 +216,7 @@ async function addAsset(id){
             if (valid_tx == true) {
                 query = 'INSERT INTO transactions (type, portfolio_id, coin_id, asset_price, tx_date, tx_amount) VALUES ("'+tx_type+'", '+ portfolio_id + ', '+coin_id+','+pxc+',"'+tx_timestamp+'",'+quantity+');'
                 await $.ajax({
-                    url: "http://localhost:3001/consulta/"+query,
+                    url: "/consulta/"+query,
                     method: "GET",
                     success: function(result){
                         alert("Transaction ID: " + result.insertId)
@@ -233,7 +232,7 @@ async function addAsset(id){
 async function deleteAsset(portfolio_id, coin_id, asset_id) {
     query = 'DELETE FROM transactions WHERE coin_id='+coin_id+' and portfolio_id='+portfolio_id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "consulta/"+query,
         method: "GET",
         success: function(result){
             console.log("All transactions from coin: " +coin_id+ " have been deleted.")
@@ -241,7 +240,7 @@ async function deleteAsset(portfolio_id, coin_id, asset_id) {
     });
     query = 'DELETE FROM assets WHERE assets_id='+asset_id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             alert("Asset deleted successfully")
@@ -255,7 +254,7 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
     let asset_data
     query = 'SELECT * FROM transactions WHERE transaction_id='+transaction_id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "consulta/"+query,
         method: "GET",
         success: function(result){
             transaction_data=result[0]
@@ -263,7 +262,7 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
     });
     query = 'SELECT * FROM assets WHERE portfolio_id='+portfolio_id+' and coin_id='+coin_id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             asset_data=result[0]
@@ -280,7 +279,7 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
     }
     query = 'UPDATE assets SET amount='+totalAmount+', spended='+totalSpended+' WHERE portfolio_id='+portfolio_id+' and coin_id='+coin_id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             alert("Asset updated successfully")
@@ -288,7 +287,7 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
     });
     query = 'DELETE FROM transactions WHERE transaction_id='+transaction_id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             alert("Transaction deleted successfully")

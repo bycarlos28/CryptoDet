@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%-include("partials/header.ejs", {title:"Portfolio"}) %>
+    <%-include("partials/header.ejs", {title:"Portfolio", user_id: user_id}) %>
     <script>
         $( document ).ready(function() {
             makeItSortable(".sortable_th", "#assets_table")

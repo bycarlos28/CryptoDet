@@ -238,6 +238,7 @@ async function updatePortfolio_7days(){
         }
     }
 }
+
 export{
     getPrice,
     getDataCoin,
