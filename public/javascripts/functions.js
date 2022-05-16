@@ -62,40 +62,42 @@ async function deletefav(favid, currentPage) {
     const id = parseInt(favid)
     const tagId = '#fav_'+id.toString()
     let coin_id
-    let query = 'SELECT * FROM favourites WHERE favourites_id='+id+';' //TODO insertar user_id y no "1"
+    let user_id
+    let query = 'SELECT * FROM favourites WHERE favourites_id='+id+';'
     await $.ajax({
         url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             coin_id = result[0].coin_id;
+            user_id = result[0].user_id;
         }
     });
     query = 'DELETE FROM favourites WHERE favourites_id='+id+';'
     await $.ajax({
-        url: "http://localhost:3001/consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET"
     });
     $(tagId).remove()
     if (currentPage) {
         try {
             $("#favstar").attr("src", "/img/emptystar.png")
-            $("#buttonfavstar").attr("onclick", "addfav('" + coin_id + "')")
+            $("#buttonfavstar").attr("onclick", "addfav('" + coin_id + ", " + user_id + "')")
         } catch (err) {}
     }
 }
 
-async function addfav(favid) {
+async function addfav(favid, userid) {
     const id = parseInt(favid)
     let coin_id
     let coin_name
     let coin_abbreviation
     let favourite_id
-    let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+1+','+id+');' //TODO insertar user_id y no "1"
+    let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+userid+','+id+');'
     await $.ajax({
         url: "/consulta/"+query,
         method: "GET",
         success: function(result){
-            favourite_id = result.insertId; //this will alert you the last_id
+            favourite_id = result.insertId;
         }
     });
     const tagId = 'fav_'+favourite_id.toString()
@@ -122,10 +124,10 @@ async function addfav(favid) {
     } catch (err) {}
 }
 
-async function createPortfolio() {
+async function createPortfolio(user_id) {
     const newname= $("#newPortfolioName").val()
     let portfolio_id
-    const query = 'INSERT INTO portfolios (user_id, name) VALUES ('+1+',"'+newname+'");' //TODO insertar user_id y no "1"
+    const query = 'INSERT INTO portfolios (user_id, name) VALUES ('+user_id+',"'+newname+'");'
     await $.ajax({
         url: "/consulta/"+query,
         method: "GET",
@@ -136,7 +138,7 @@ async function createPortfolio() {
     window.location="../portfolio/"+portfolio_id
 }
 
-async function deletePortfolio(portfolio_id) {
+async function deletePortfolio(portfolio_id, user_id) {
     const id = parseInt(portfolio_id)
     let redirectedPortfolio
     let query = 'DELETE FROM portfolios WHERE portfolio_id='+id+';'
@@ -144,7 +146,7 @@ async function deletePortfolio(portfolio_id) {
         url: "/consulta/"+query,
         method: "GET",
     });
-    query = 'SELECT portfolio_id FROM portfolios WHERE user_id ='+1+';' //TODO insertar user_id y no "1"
+    query = 'SELECT portfolio_id FROM portfolios WHERE user_id ='+user_id+';'
     await $.ajax({
         url: "/consulta/"+query,
         method: "GET"
@@ -254,7 +256,7 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
     let asset_data
     query = 'SELECT * FROM transactions WHERE transaction_id='+transaction_id+';'
     await $.ajax({
-        url: "consulta/"+query,
+        url: "/consulta/"+query,
         method: "GET",
         success: function(result){
             transaction_data=result[0]

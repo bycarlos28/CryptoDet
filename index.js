@@ -112,7 +112,8 @@ app.get('/logout',auth_destroy,(req, res) => {
 })
 
 app.get('/createportfolio',auth, (req, res) => {
-    res.render('newPortfolio')
+    let user_id = req.session.user_id
+    res.render('newPortfolio', {user_id})
 })
 
 app.get('/addAsset/:portfolio_id/:coin_id?',auth, async (req, res) => {
@@ -123,6 +124,7 @@ app.get('/addAsset/:portfolio_id/:coin_id?',auth, async (req, res) => {
 })
 
 app.get('/confirmdelete/:toDelete/:id',auth, async (req, res) => {
+    let user_id = req.session.user_id
     const toDelete = req.params.toDelete
     let query
     if (toDelete == "portfolio") {
@@ -134,7 +136,7 @@ app.get('/confirmdelete/:toDelete/:id',auth, async (req, res) => {
     }
     let dataToDelete = await consulta(query);
     dataToDelete = dataToDelete[0]
-    res.render('confirmDelete',{dataToDelete, toDelete})
+    res.render('confirmDelete',{dataToDelete, toDelete, user_id})
 })
 
 app.get('/coin/:abb',auth, async (req, res) => {
