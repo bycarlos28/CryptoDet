@@ -175,7 +175,7 @@ async function addAsset(id){
                 if (result.length == 0) {
                     query = 'INSERT INTO assets (portfolio_id, coin_id, amount, spended) VALUES ('+ portfolio_id + ', ' + coin_id + ', ' + quantity + ", " + spended + ");"
                     await $.ajax({
-                        url: "http://localhost:3001/consulta/"+query,
+                        url: "/consulta/"+query,
                         method: "GET",
                     });
                 } else {

@@ -32,7 +32,7 @@
             $("#portfolios").append(history_div)
             query = 'SELECT * FROM transactions t INNER JOIN coins c ON t.coin_id = c.coin_id WHERE t.coin_id='+coin_id+' and t.portfolio_id='+portfolio_id+' ORDER BY t.tx_date DESC;'
             await $.ajax({
-                url: "http://localhost:3001/consulta/"+query,
+                url: "/consulta/"+query,
                 method: "GET",
                 success: function(result){
                     history_data = result
