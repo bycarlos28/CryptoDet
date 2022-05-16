@@ -53,15 +53,16 @@ app.get('/login',(req, res) => {
 })
 
 app.post('/login',async(req, res) => {
+    let user_id = req.session.user_id
     let username = req.body.username;
     let password = req.body.password;
     let user = await consulta("Select * from Users where username like '"+username+"';");
     let context= {}
-    let msg_username = "El usuario"+username+" no existe";
+    let msg_username = "El usuario "+username+" no existe";
     let msg_password = "La contraseña introducida es incorrecta"
     if(user.length == 0){
         context['msg_username'] = msg_username
-        res.render('account',{ form : "partials/login.ejs",context})
+        res.render('account',{ form : "partials/login.ejs",context,user_id})
     }else{
         if(encriptar(password) == user[0].password){
             req.session.user = username;
@@ -69,7 +70,7 @@ app.post('/login',async(req, res) => {
             res.redirect('/')
         }else{
             context['msg_password'] = msg_password
-            res.render('account',{ form : "partials/login.ejs",context})
+            res.render('account',{ form : "partials/login.ejs",context,user_id})
         }
     }
 })
@@ -178,7 +179,7 @@ app.get('/consulta/:query', async(req,res) =>{
     let sql = req.params.query;
     let query = await consulta(sql);
     res.json(query)
-  })
+})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
