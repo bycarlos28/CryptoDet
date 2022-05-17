@@ -141,6 +141,11 @@ async function createPortfolio(user_id) {
 async function deletePortfolio(portfolio_id, user_id) {
     const id = parseInt(portfolio_id)
     let redirectedPortfolio
+    let query2 = 'DELETE FROM transactions WHERE portfolio_id='+id+';'
+    await $.ajax({
+        url: "/consulta/"+query2,
+        method: "GET",
+    });
     let query = 'DELETE FROM portfolios WHERE portfolio_id='+id+';'
     await $.ajax({
         url: "/consulta/"+query,

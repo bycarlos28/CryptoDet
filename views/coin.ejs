@@ -9,7 +9,7 @@
                         <% if (isfavourite) { %>
                             <button id="buttonfavstar" onclick="deletefav('<%=favourite_id%>', true)"><img id="favstar" src="/img/fullstar.png" class="max-w-[40px] max-h-[40px]"></button>
                         <% } else { %>
-                            <button id="buttonfavstar" onclick="addfav('<%=coin.coin_id%>, <%=user_id%>')"><img id="favstar" src="/img/emptystar.png" class="max-w-[40px] max-h-[40px]"></button>
+                            <button id="buttonfavstar" onclick="addfav('<%=coin.coin_id%>', '<%=user_id%>')"><img id="favstar" src="/img/emptystar.png" class="max-w-[40px] max-h-[40px]"></button>
                         <% } %>
                         <h1 class="font-bold text-4xl"><%= coin.name %></h1>
                         <h2 class="text-2xl ml-[20px] bg-[#FFC900] rounded-full p-[7px] pt-[3px] pb-[3px]">$<%= coin.abbreviation %></h2>
