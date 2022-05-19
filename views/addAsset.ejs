@@ -1,0 +1,48 @@
+<div id="modal">    
+    <form onsubmit="addAsset('<%= portfolio_id %>'); return false;">
+        <div>
+            <fieldset required class="flex justify-around">
+                <div><input type="radio" id="buy" name="transaction_type" value="buy" checked> <label for="buy">Buy</label></div>
+                <div><input type="radio" id="sell" name="transaction_type" value="sell"> <label for="sell">Sell</label></div>
+            </fieldset>
+        </div>
+        <div class="flex mt-[5px]">
+            <h1 class="font-bold">Add new asset:</h1>
+            
+            <select name="asset" id="input_asset" class="border-2 border-solid pl-[5px] ml-[10px]">
+                <optgroup style="max-height: 65px;" label="">
+                    <% coins.forEach(coin => { %>
+                        <% if (coin.coin_id == default_coin) {%>
+                            <option value="<%= coin.coin_id %>" selected><%= coin.name %> ($<%= coin.abbreviation %>)</option>
+                        <% } else { %>
+                            <option value="<%= coin.coin_id %>"><%= coin.name %> ($<%= coin.abbreviation %>)</option>
+                    <% }}); %>
+                </optgroup>
+              </select>
+        </div>
+        <div class="flex justify-around mt-[5px]">
+            <div>
+                <p>Quantity:</p>
+                <input id="asset_quantity" type="number" class="max-w-[150px] border-2 border-solid pl-[5px] pr-[5px]" min="0" step="any" placeholder="Quantity" required>
+            </div>
+            <div>
+                <p>Price Per Coin ($USD):</p>
+                <input id="asset_pxc" type="number" class="max-w-[150px] border-2 border-solid pl-[5px] pr-[5px]" min="0" step="any" placeholder="Pricer Per Coin" required>
+            </div>
+        </div>
+        <div class="flex justify-center mt-[5px]">
+            <div>
+                <p>Transaction Timestamp:</p>
+                <input id="transaction_timestamp" type="datetime-local" class="border-2 border-solid" max="" required>
+                <script>
+                    currentDate = new Date()
+                    maxDate = currentDate.getFullYear() + "-" + (currentDate.getMonth()+1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})+ "-" +currentDate.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "T" + currentDate.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + ":" + currentDate.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+                    $("#transaction_timestamp").attr("max", maxDate)
+                </script>
+            </div>
+        </div>
+        <div class="flex justify-center mt-[8px]">
+            <input type="submit" class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900] hover:cursor-pointer" value="Add transaction">
+        </div>
+    </form>
+</div>

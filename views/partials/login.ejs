@@ -1,11 +1,27 @@
 <div class="w-2/4 border-l-2 border-sky-800  flex justify-center items-center flex-col">
-    <h2>Inicia Session</h2>
+    <h2 class="text-center font-bold text-4xl mb-[10px]">Log In</h2>
     <form class="flex flex-col" method="post">
-        <p>Nombre de usuario</p>
-        <input type="text" name="username">
-        <p>Contraseña</p>
-        <input type="password" name="password">
-        <input type="submit" value="enviar">
+        <p class="text-xl">Username:</p>
+        <input class="h-[30px] pl-[10px]" type="text" name="username" placeholder="Username">
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_username != 'undefined') { %>
+                <div class="flex mt-[5px]">
+                    <img class="mr-[10px] max-h-[25px] max-w-[25px]" src="/img/alert.png">
+                    <p class="text-lg text-red-700"><%= context.msg_username %></p>
+                </div>
+            <% } %>
+        <% } %>
+        <p class="text-xl mt-[15px]">Password:</p>
+        <input class="h-[30px] pl-[10px]" type="password" name="password" placeholder="Password">
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_password != 'undefined') { %>
+                <div class="flex mt-[5px]">
+                    <img class="mr-[10px] max-h-[25px] max-w-[25px]" src="/img/alert.png">
+                    <p class="text-lg text-red-700"><%= context.msg_password %></p>
+                </div>
+            <% } %>
+        <% } %>
+        <input class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900] max-w-[60px] self-center mt-[20px] hover:cursor-pointer" type="submit" value="Log In">
     </form>
-    <a href="/register">Crear Cuenta</a>
+    <a class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900] max-w-[120px] self-center mt-[20px] hover:cursor-pointer" href="/register">Create account</a>
 </div>

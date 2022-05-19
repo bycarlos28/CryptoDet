@@ -1,14 +1,34 @@
 <div class="w-2/4 border-l-2 border-sky-800  flex justify-center items-center flex-col">
-    <h2>Registra Cuenta</h2>
+    <h2 class="text-center font-bold text-4xl mb-[10px]">Create Account</h2>
+    <div id="form">
     <form class="flex flex-col" action="register" method="post">
-        <p>Nombre de usuario</p>
-        <input type="text" id="username" name="username" required>
-        <p>Correo electronico</p>
-        <input type="email" id="email" name="email" required>
-        <p>Fecha de nacimiento</p>
-        <input type="date" id="birth_date" name="birth_date" required>
-        <p>Contraseña</p>
-        <input type="password" id="password" name="password" required>
-        <input id="enviar" type="submit" value="enviar">
+        <p class="text-xl">Username:</p>
+        <input class="h-[30px]" type="text" id="username" name="username" required>
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_username != 'undefined') { %>
+                <div class="flex mt-[5px]">
+                    <img class="mr-[10px] max-h-[25px] max-w-[25px]" src="/img/alert.png">
+                    <p class="text-lg text-red-700"><%= context.msg_username %></p>
+                </div>
+            <% } %>
+        <% } %>
+        <p class="text-xl mt-[5px]">E-mail:</p>
+        <input class="h-[30px]" type="email" id="email" name="email" required>
+        <%if (typeof context != 'undefined') { %>
+            <%if (typeof context.msg_email != 'undefined') { %>
+                <div class="flex mt-[5px]">
+                    <img class="mr-[10px] max-h-[25px] max-w-[25px]" src="/img/alert.png">
+                    <p class="text-lg text-red-700"><%= context.msg_email %></p>
+                </div>
+            <% } %>
+        <% } %>
+        <p class="text-xl mt-[5px]">Birth Date:</p>
+        <input class="h-[30px] pl-[10px]" type="date" id="birth_date" name="birth_date" required>
+        <p class="text-xl mt-[5px]">Password:</p>
+        <input class="h-[30px]" type="password" id="password" name="password" required>
+        <p class="text-xl mt-[5px]">Repeat Password:</p>
+        <input class="h-[30px]" type="password" id="password2" name="password2" required>
+        <input class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900] max-w-[120px] self-center mt-[20px] hover:cursor-pointer" id="enviar" type="submit" value="Create account">
     </form>
+    </div>
 </div>

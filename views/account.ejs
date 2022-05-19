@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%-include("partials/header.ejs", {title:"Log In"}) %>
-    <div class="flex m-10 mx-30 border-2">
-        <div class="w-2/4 border-r-2 border-sky-800">
-            <div class="flex">
-                <i class="fa fa-bitcoin"></i>
+    <%-include("partials/header.ejs", {title:"Account", user_id: user_id}) %>
+    <div class="flex m-10 mx-30">
+        <div class="w-2/4 p-[5%]">
+            <div class="flex m-[20px]">
+                <img class="max-w-[100px] max-h-[100px] ml-[10px] mr-[30px]" src="/img/portfolio.png">
                 <div>
-                    <h3>Define tu portfolio</h3>
-                    <p>Añade las criptomonedas que tengas para hacer un seguimiento de tus inversiones.</p>
+                    <h3 class="font-bold text-3xl">Define your portfolio</h3>
+                    <p class="text-lg">Add the cryptocurrencies you have to keep track of your investments.</p>
                     
                 </div>
             </div>
-            <div class="flex">
-                <i class="fa fa-bitcoin"></i>
+            <div class="flex m-[20px]">
+                <img class="max-w-[100px] max-h-[100px] mr-[20px]" src="/img/bitcoin.png">
                 <div>
-                    <h3>Obtén información sobre los proyectos</h3>
-                    <p>Visualiza toda la información que desees sobre los proyectos de criptomonedas registrados en tiempo real.</p>
+                    <h3 class="font-bold text-3xl">Get information about the projects</h3>
+                    <p class="text-lg">View all the information you want about registered cryptocurrency projects on live.</p>
                 </div>
             </div>
-            <div class="flex">
-                <i class="fa fa-bitcoin"></i>
+            <div class="flex m-[20px]">
+                <img class="max-w-[100px] max-h-[100px] mr-[20px]" src="/img/favourite.png">
                 <div>
-                    <h3>Añade tus favoritas</h3>
-                    <p>Crea una lista de tus criptomonedas favoritas para tenerlas más a mano.</p>
+                    <h3 class="font-bold text-3xl">Add your favorites</h3>
+                    <p class="text-lg">Create a list of your favorite cryptocurrencies to keep them close at hand.</p>
                 </div>
             </div>
         </div>
-        <%-include(form)%>
+        <% if(typeof context != 'undefined'){ %>
+            <%-include(form,context)%>
+        <% } else{ %>  
+            <%-include(form)%>
+        <% } %>
     </div>
 </body>
 </html>

@@ -5,22 +5,74 @@
     <link href="/css/style.css" rel="stylesheet" type="text/css">
     <script src="/js/jquery-3.6.0.js"></script>
     <script src="/js/functions.js"></script>
-    <script src="/js/echarts.js"></script>
+    <script src="/js/echarts.js"></script>  
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <title><%= title %></title>
     <link rel="icon" type="image/x-icon" href="/img/logo/favicon.ico">
 </head>
-<body class="bg-[#FFF89A]">
+<body onload="docReady('<%=user_id%>')" class="bg-[#FFF89A]">
+    <script>
+        async function docReady(user_id) {
+            $('#user_menu').click(function() {
+                $('#user_portfolios').slideToggle();
+            });
+            if (user_id != "") {
+                query = 'SELECT * FROM users WHERE user_id='+user_id+';'
+                await $.ajax({
+                    url: "/consulta/"+query,
+                    method: "GET"
+                }).done(function(data){
+                    if (data[0].role=="admin") {
+                        $("#user_portfolios").append($("<li>").click(function(){ window.location = "/admin/add"; }).attr("class","border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]").append($("<p>").append('span').text("(A) Add coin")))
+                    }
+                })
+                query = 'SELECT * FROM portfolios WHERE user_id='+user_id+';'
+                await $.ajax({
+                    url: "/consulta/"+query,
+                    method: "GET"
+                }).done(function(data){
+                    for(let i=0; i != data.length; i++){
+                        $("#user_portfolios").append($("<li>").click(function(){ window.location = "/portfolio/"+data[i].portfolio_id; }).attr("class","border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]").append($("<p>").append('span').text(data[i].name)))
+                    }
+                    if (data.length == 0) {
+                        $("#user_portfolios").append($('<li>').attr("class","border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]").append($("<a>").attr("href", "/createportfolio").attr("rel", "modal:open").append($("<p>").append('span').text("Create a Portfolio"))))  
+                    }
+                    $("#user_portfolios").attr("size", data.length)
+                })
+                $("#user_portfolios").append($('<li>').click(function(){ window.location = "/logout";}).attr("class","border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]").append($("<p>").append('span').text("Log Out")))
+                $("#user_portfolios").attr("size", 1)
+            } else {
+                $("#user_portfolios").append($('<li>').click(function(){ window.location = "/login";}).attr("class","border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]").append($("<p>").append('span').text("Log In")))
+                $("#user_portfolios").attr("size", 1)
+            }   
+
+        }
+    </script>
+    <style>
+        #user_portfolios > li:hover {
+            cursor: pointer;
+        }
+    </style>
     <header class="bg-gradient-to-b from-[#36677A] to-[#1A5F7A] flex justify-between">
+        <div id="alertFeedback" class="absolute opacity-0">
+            
+        </div>
         <div id="logo" class="ml-[10%] mt-[20px] mb-[20px]">
-            <a href="./index.html"><img class="max-w-xs max-h-xs" src="/img/logo/logoAmarillo.png"></a>
+            <a href="/"><img class="max-w-xs max-h-xs max-h-[100px]" src="/img/logo/logoAmarillo.png"></a>
         </div>
         <div id="userExp" class="flex mr-[10%] items-center">
-            <img class="max-w-[40px] max-h-[40px] mr-[20px]" src="/img/anonuser.png">
-            <form>
-                <input class="max-w-[200px] max-h-[40px] mt-[20px]" type="text" placeholder="Search...">
+            <form id="searcher" action="">
+                <input id="input_searcher" class="max-w-[200px] max-h-[40px] mt-[20px] px-[10px]" type="text" placeholder="Search asset...">
                 <button type="submit" class="pt-[10px]"><i class="fa fa-search"></i></button>
             </form>
+            <div class="p-[10px]">
+                <a href="javascript:void(0);" id="user_menu"><img class="max-w-[35px] max-h-[35px] ml-[20px] mt-[15px]" src="/img/anonuser.png"></a>
+                <ul id="user_portfolios" class="absolute shadow-lg shadow-white mt-[7px]" size="5" style="display:none"></ul>
+            </div>
         </div>
     </header>

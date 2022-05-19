@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%-include("partials/header.ejs", {title:"Portfolio", user_id: user_id}) %>
+    <script>
+        $( document ).ready(function() {
+            makeItSortable(".sortable_th", "#assets_table")
+            $('.display_actions').click(function() {
+                $("#actions_"+$(this).attr("id")).slideToggle();
+            });
+        })
+
+        function makeItSortable(th_class, table_id) {
+            $(th_class).click(function(){
+                    var table = $(this).parents(table_id).eq(0)
+                    var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+                    this.asc = !this.asc
+                    if (!this.asc){rows = rows.reverse()}
+                    for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+                })
+                function comparer(index) {
+                    return function(a, b) {
+                        var valA = getCellValue(a, index), valB = getCellValue(b, index)
+                        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+                    }
+                }
+                function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
+        }
+
+        async function tx_history(coin_id, portfolio_id) {
+            $("#yourAssets").toggle()
+            history_div = $("<div>").attr("id", "tx_history").attr("class", "mt-[20px]")
+            $("#portfolios").append(history_div)
+            query = 'SELECT * FROM transactions t INNER JOIN coins c ON t.coin_id = c.coin_id WHERE t.coin_id='+coin_id+' and t.portfolio_id='+portfolio_id+' ORDER BY t.tx_date DESC;'
+            await $.ajax({
+                url: "/consulta/"+query,
+                method: "GET",
+                success: function(result){
+                    history_data = result
+                }
+            })
+            allTrs = ''
+            history_data.forEach(element => {
+                treatedDate = element.tx_date.split("-")[2].slice(0,2)+'/'+element.tx_date.split("-")[1]+'/'+element.tx_date.split("-")[0]+ " " + element.tx_date.split("T")[1].split(":")[0]+ ":" + element.tx_date.split("T")[1].split(":")[1]
+                allTrs = allTrs +
+                '<tr id="tr_tx_'+element.transaction_id+'" class="hover:bg-[#fffbb8]">'+
+                    '<td><p>'+element.type+'</p></td>'+
+                    '<td><p>'+element.asset_price+'</p></td>'+
+                    '<td>'+element.tx_amount+'</td>'+
+                    '<td><p>'+(element.asset_price*element.tx_amount).toFixed(2)+'</p></td>'+
+                    '<td>'+treatedDate+'</td>'+
+                    '<td class="flex justify-center"><a href="/confirmdelete/transaction/'+element.transaction_id+'" rel="modal:open"><img class="max-w-[17px] max-h-[17px] mr-[10px]" src="/img/delete_black.png"></a></td>'+
+                '</tr>'
+            })
+            document.getElementById("tx_history").innerHTML = (
+                '<div class="flex justify-between">'+
+                    '<div class="flex">'+
+                        '<img class="max-w-[25px] max-h-[25px] mt-[5px] mr-[10px]" src="/img/currencies/'+history_data[0].abbreviation.toLowerCase()+'.png">'+
+                        '<h2 class="font-bold text-2xl">'+history_data[0].name+' Transaction History:</h2>'+
+                    '</div>'+
+                    '<a class="rounded-xl p-[5px] pt-[2px] bg-[#FFC900] hover:cursor-pointer" onclick="window.location.href=\'../portfolio/'+portfolio_id+'\' ">Back to my assets</a>'+
+                '</div>'+
+                '<table id="history_table" class="ml-[20px] table-auto">'+
+                        '<thead>'+
+                            '<tr class="font-bold">'+
+                                '<th class="sortable_th w-[10%]">'+
+                                    '<div class="flex items-center">'+
+                                        '<p>Type</p>'+
+                                        '<img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">'+
+                                    '</div>'+
+                                '</th>'+
+                                '<th class="sortable_th w-[15%]">'+
+                                    '<div class="flex items-center">'+
+                                        '<p>Price ($USD)</p>'+
+                                        '<img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">'+
+                                    '</div>'+
+                                '</th>'+
+                                '<th class="sortable_th w-[20%]">'+
+                                    '<div class="flex items-center">'+
+                                        '<p>Amount ('+history_data[0].abbreviation+')</p>'+
+                                        '<img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">'+
+                                    '</div>'+
+                                '</th>'+
+                                '<th class="sortable_th w-[20%]">'+
+                                    '<div class="flex items-center">'+
+                                        '<p>Total spended ($)</p>'+
+                                        '<img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">'+
+                                    '</div>'+
+                                '</th>'+
+                                '<th class="sortable_th w-[30%]">'+
+                                    '<div class="flex items-center">'+
+                                        '<p>Timestamp</p>'+
+                                        '<img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">'+
+                                    '</div>'+
+                                '</th>'+
+                                '<th class="text-left w-[10%]"><p>Actions</p></th>'+
+                            '</tr>'+
+                        '</thead>'+
+                        '<tbody>'+
+                            allTrs+
+                        '</tbody>'
+            )
+            makeItSortable(".sortable_th", "#history_table")
+        }
+    </script>
+        <div id="content" class="flex">
+            <div id="user_portfolios" class="w-[20%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
+                <div class="flex justify-between">
+                    <h1 class="font-bold text-xl">Your portfolios:</h1>
+                    <a class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]" href="/createportfolio" rel="modal:open">+ Add portfolio</a>
+                </div>
+                <ul class="ml-[20px]" id="portfoliosList">
+                    <% portfolios.forEach(function(portfolio){%>
+                        <li><a href="/portfolio/<%= portfolio.portfolio_id %>"><p class="portfolio text-lg max-w-[80%]"><%=portfolio.name%></p></a></li>
+                    <%}); %>
+                </ul>
+            </div>
+
+            <div id="portfolios" class="w-[50%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
+                <div id="portfolio-header" class="flex justify-between">
+                    <div id="title" class="flex">
+                        <h1 class="font-bold text-2xl"><%= portfolio.name %>: <%= totalPortfolio%>$</h1>
+                        <% if (balance_last_24h) { %>
+                            <% if (balance_last_24h>=0) { %>
+                                <p id="balancePortfolio" class="ml-[10px] p-[2px] px-[4px] bg-lime-600 rounded-full">+ <%= balance_last_24h.toFixed(2)%>%</p>
+                            <% } else { %>
+                                <p id="balancePortfolio" class="ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full"><%= balance_last_24h.toFixed(2)%>%</p>
+                            <% } %>
+                        <% } %>
+                    </div>
+                    <div>
+                        <a class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] flex text-white" href="/confirmdelete/portfolio/<%= portfolio_id %>" rel="modal:open"><img src="/img/delete.png" class="max-w-[15xp] max-h-[20px] mt-[3px] mr-[5px]">Delete portfolio</a>
+                    </div>
+                </div>
+                <button id="change" class="flex rounded-lg bg-amber-300">
+                    <p id="24h" class="px-[5px] bg-amber-400 rounded-lg text-lg">24h</p>
+                    <p id="7d"class="px-[5px] bg-amber-300 rounded-lg text-lg">7 days</p>
+                </button>
+                <div id="chart" style="width: 100%;height:400px;">
+                    <script type="text/javascript">
+                        let historicals_portfolio_1day_keys = '<%= historicals_portfolio_1day_keys %>'.split(',');
+                        for(let i=0; i != historicals_portfolio_1day_keys.length; i++){
+                            historicals_portfolio_1day_keys[i] = historicals_portfolio_1day_keys[i].split('.')[0].slice(0, -3);
+                        }
+                        let historicals_portfolio_1day_values = '<%= historicals_portfolio_1day_values %>'.split(',');
+                        let lista_int = []
+                        for(let e=0; e != historicals_portfolio_1day_values.length; e++){
+                            lista_int.push(parseInt(historicals_portfolio_1day_values[e]))
+                        }
+                        let max = Math.max.apply(null,lista_int)
+                        let min = Math.min.apply(null,lista_int)
+                        min =  min - ((max- min) * 0.15)
+
+
+                        let historicals_portfolio_7day_keys = '<%= historicals_portfolio_7day_keys %>'.split(',');
+                        for(let i=0; i != historicals_portfolio_7day_keys.length; i++){
+                            historicals_portfolio_7day_keys[i] = historicals_portfolio_7day_keys[i].split('.')[0].slice(0, -3);
+                        }
+                        let historicals_portfolio_7day_values = '<%= historicals_portfolio_7day_values %>'.split(',');
+                        let lista_int2 = []
+                        for(let e=0; e != historicals_portfolio_7day_values.length; e++){
+                            lista_int2.push(parseInt(historicals_portfolio_7day_values[e]))
+                        }
+                        let max2 = Math.max.apply(null,lista_int2)
+                        let min2 = Math.min.apply(null,lista_int2)
+                        min2 =  min2 - ((max2- min2) * 0.15)
+                        // Initialize the echarts instance based on the prepared dom
+                        var myChart = echarts.init(document.getElementById('chart'));
+                
+                        // Specify the configuration items and data for the chart
+                        var option = {
+                        title: {
+                            text: 'Balance chart 24h'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                            animation: false,
+                            type: 'cross',
+                            lineStyle: {
+                                color: '#376df4',
+                                width: 2,
+                                opacity: 1
+                            }
+                            }
+                        },
+                        legend: {
+                            data: ['sales']
+                        },
+                        xAxis: {
+                            data: historicals_portfolio_1day_keys,
+                            show: false,
+                            axisLabel: {interval: 12, rotate: 60 }
+                            
+                        },
+                        yAxis: {
+                            min: min
+                        },
+                        series: [
+                            {
+                            name: 'usd',
+                            type: 'line',
+                            data: historicals_portfolio_1day_values,
+                            areaStyle: {opacity: 0.36},
+                            smooth: true,
+                                showSymbol: false,
+                                lineStyle: {
+                                    width: 1
+                                }
+
+                            }
+                        ]
+                    };              
+                        // Display the chart using the configuration items and data just specified.
+                        myChart.setOption(option);
+                        $( document ).ready(function() {
+                            let flag = false;
+                            $('#change').click(function(){
+                                if(flag == false){
+                                    option.title.text = 'balance chart 7 days'
+                                    option.xAxis.data = historicals_portfolio_7day_keys;
+                                    option.series.data = historicals_portfolio_7day_values;
+                                    option.xAxis.axisLabel.interval = 96
+                                    option.yAxis.min = min2
+                                    flag = true
+                                    $('#24h').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
+                                    $('#7d').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
+                                    if (parseInt("<%=balance_last_7d%>")>=0) {
+                                        $("#balancePortfolio").text('+ '+parseInt("<%=balance_last_7d%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-lime-600 rounded-full")
+                                    } else {
+                                        $("#balancePortfolio").text(parseInt("<%=balance_last_7d%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full")
+                                    }
+                                }else{
+                                    option.title.text = 'balance chart 24h'
+                                    option.xAxis.data = historicals_portfolio_1day_keys;
+                                    option.series.data = historicals_portfolio_1day_values;
+                                    option.xAxis.axisLabel.interval = 12
+                                    option.yAxis.min = min
+                                    flag = false
+                                    $('#24h').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
+                                    $('#7d').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
+                                    if (parseInt("<%=balance_last_24h%>")>=0) {
+                                        $("#balancePortfolio").text('+ '+parseInt("<%=balance_last_24h%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-lime-600 rounded-full")
+                                    } else {
+                                        $("#balancePortfolio").text(parseInt("<%=balance_last_24h%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full")
+                                    }
+                                }
+                                myChart.setOption(option);
+                            })
+                        });
+                    </script>
+                </div>
+                <hr>
+                <div id="yourAssets" class="mt-[20px]">
+                    <div class="flex justify-between">
+                        <h2 class="font-bold text-xl">Your assets:</h2>
+                        <a class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]" href="../addAsset/<%= portfolio_id %>" rel="modal:open">+ Add asset</a>
+                    </div>
+                    <table id="assets_table" class="ml-[20px] table-auto">
+                        <thead>
+                            <tr class="font-bold">
+                                <th></th>
+                                <th class="sortable_th w-[25%]">
+                                    <div class="flex items-center">
+                                        <p>Name</p>
+                                        <img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">
+                                    </div>
+                                </th>
+                                <th class="sortable_th w-[20%]">
+                                    <div class="flex items-center">
+                                        <p>Price ($)</p>
+                                        <img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">
+                                    </div>
+                                </th>
+                                <th class="sortable_th w-[20%]">
+                                    <div class="flex items-center">
+                                        <p>Holdings</p>
+                                        <img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">
+                                    </div>
+                                </th>
+                                <th class="sortable_th w-[30%]">
+                                    <div class="flex items-center">
+                                        <p>Profit/Loss ($)</p>
+                                        <img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">
+                                    </div>
+                                </th>
+                                <th class="text-left"><p>Actions</p></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% assets.forEach(function(asset){%>
+                                <tr class="hover:bg-[#fffbb8]">
+                                    <td><img src="/img/currencies/<%= asset.abbreviation.toLowerCase()%>.png" class="max-w-[20px] max-h-[20px] mr-[10px]"></td>
+                                    <td><a href="/coin/<%=asset.abbreviation.toLowerCase()%>"><%=asset.name%> ($<%=asset.abbreviation%>)</a></td>
+                                    <td><%= asset.price %></td>
+                                    <td><%=asset.amount%> <%=asset.abbreviation%></td>
+                                    <td><%= ((asset.price*asset.amount) - asset.spended).toFixed(2)%></td>
+                                    <td class="text-2xl">
+                                        <div class="flex">
+                                            <a class="font-bold mr-[5px]" href="/addAsset/<%= portfolio_id %>/<%= asset.coin_id%>" rel="modal:open">+</a>|
+                                            <a id="<%=asset.coin_id%>" class="display_actions font-bold ml-[5px]"><img class="max-w-[17px] max-h-[17px] mt-[10px]" src="/img/3dots.png"></a>
+                                        </div>
+                                        <ul id="actions_<%=asset.coin_id%>" class="absolute shadow-lg shadow-white mt-[5px]" size="5" style="display:none">
+                                            <li class=" hover:cursor-pointer border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]">
+                                                <div class="flex">
+                                                    <img class="max-w-[20px] max-h-[20px] mt-[5px] mr-[6px]" src="/img/tx_historicals.png">
+                                                    <button onclick="tx_history('<%= asset.coin_id %>', '<%= portfolio_id %>')" class="text-lg font-normal flex"><p>Transactions</p></a>
+                                                </div>
+                                            </li>
+                                            <li class="hover:cursor-pointer border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]">
+                                                <div class="flex">
+                                                    <img class="max-w-[20px] max-h-[20px] mt-[2px] mr-[10px]" src="/img/delete_black.png">
+                                                    <a class="text-lg font-normal" href="/confirmdelete/asset/<%= asset.coin_id%>" rel="modal:open">Delete asset</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            <%}); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="favourites" class="w-[30%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
+                <h1 class="font-bold text-2xl">Favourite assets:</h1>
+                <table class="favourites_table table-auto w-[65%] ml-[20px]">
+                    <tbody>
+                        <% favourites.forEach(function(favourite){%>
+                            <tr id="fav_<%=favourite.favourites_id%>">
+                                <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>')"><img class="max-w-[15px] max-h-[15px] mr-[7px]" src="/img/fullstar.png"></button></td>
+                                <td><a href="../coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
+                            </tr>
+                        <%}); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
