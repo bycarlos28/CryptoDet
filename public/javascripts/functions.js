@@ -3,7 +3,7 @@ $( document ).ready(function() {
         if (validar_passwords() == true){
             console.log('hola')
         }else{
-            $('#form').append('<div id="msg_password"><p>Las Contraseñas no coinciden </p></div>')
+            $('#form').append('<div id="msg_password"><p>Passwords do not match</p></div>')
             event.preventDefault()
         }
     });
