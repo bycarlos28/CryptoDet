@@ -69,8 +69,8 @@ app.post('/login',async(req, res) => {
     let password = req.body.password;
     let user = await consulta("Select * from Users where username like '"+username+"';");
     let context= {}
-    let msg_username = "El usuario "+username+" no existe";
-    let msg_password = "La contraseña introducida es incorrecta"
+    let msg_username = "The user "+username+" does not exist";
+    let msg_password = "The password is incorrect."
     if(user.length == 0){
         context['msg_username'] = msg_username
         res.render('account',{ form : "partials/login.ejs",context,user_id})
