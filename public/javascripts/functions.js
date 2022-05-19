@@ -396,7 +396,7 @@ async function addCoin(contracts,socials) {
         });
     }
 
-    for (var i = 1; i <= socials; i++) {
+    /*for (var i = 1; i <= socials; i++) {
         type= $('input[name="type_'+i+'"]').val()
         platform = $('input[name="platform_'+i+'"]').val()
         url = $('input[name="url_'+i+'"]').val()
@@ -410,8 +410,9 @@ async function addCoin(contracts,socials) {
                 spawnFeedbackBox("Success",  coin_name+" added to Database.")
                 //window.location="/admin/add"
             }
-        });
-    }
+        });         
+    }*/ // This function cause "Uncaught error and it is the sameone as the insert contract one (right above). Socials should be inserted manually."
+    
     window.location="/admin/add"
     spawnFeedbackBox("success", coin_name+" ($"+coin_abbreviation+") added to the Database.")
 }
