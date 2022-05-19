@@ -169,7 +169,7 @@
                         // Specify the configuration items and data for the chart
                         var option = {
                         title: {
-                            text: 'balance chart 24h'
+                            text: 'Balance chart 24h'
                         },
                         tooltip: {
                             trigger: 'axis',
@@ -216,7 +216,7 @@
                             let flag = false;
                             $('#change').click(function(){
                                 if(flag == false){
-                                    option.title.text = 'balance chart 24h'
+                                    option.title.text = 'balance chart 7 days'
                                     option.xAxis.data = historicals_portfolio_7day_keys;
                                     option.series.data = historicals_portfolio_7day_values;
                                     option.xAxis.axisLabel.interval = 96
@@ -230,7 +230,7 @@
                                         $("#balancePortfolio").text(parseInt("<%=balance_last_7d%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full")
                                     }
                                 }else{
-                                    option.title.text = 'balance chart 7 days'
+                                    option.title.text = 'balance chart 24h'
                                     option.xAxis.data = historicals_portfolio_1day_keys;
                                     option.series.data = historicals_portfolio_1day_values;
                                     option.xAxis.axisLabel.interval = 12
