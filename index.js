@@ -156,7 +156,7 @@ app.get('/coin/:abb', async (req, res) => {
     const abbreviation=req.params.abb.toUpperCase()
     let coin = await consulta('SELECT * FROM coins WHERE abbreviation="'+abbreviation+'";');
     if(coin == ""){
-        res.redirect('/')
+        res.status(404).render('404',{user_id});
     }
     coin = coin[0]
     // Getting coin's contracts
@@ -218,7 +218,7 @@ app.get('/portfolio/:id', auth,async (req, res) => {
         assets.forEach(function(asset) {
             totalPortfolio += parseInt((asset.price*asset.amount).toFixed(2))
         })
-        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id,historicals_portfolio_1day_keys,historicals_portfolio_1day_values,historicals_portfolio_7day_keys,historicals_portfolio_7day_values, totalPortfolio})
+        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id, historicals_portfolio_1day_keys, historicals_portfolio_1day_values, historicals_portfolio_7day_keys, historicals_portfolio_7day_values, totalPortfolio})
     }else{
         res.status(404).render('404',{user_id});
     }
