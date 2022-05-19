@@ -7,9 +7,9 @@
                 <div class="border-2 border-r-zinc-300 border-transparent pr-[15px] w-[40%]">
                     <div id="name" class="flex items-end">
                         <% if (isfavourite) { %>
-                            <button id="buttonfavstar" onclick="deletefav('<%=favourite_id%>', true)"><img id="favstar" src="/img/fullstar.png" class="max-w-[40px] max-h-[40px]"></button>
+                            <button id="buttonfavstar" onclick="deletefav('<%=favourite_id%>', true)"><img id="favstar" src="/img/fullstar.png" class="max-w-[40px] max-h-[40px] mr-[10px]"></button>
                         <% } else { %>
-                            <button id="buttonfavstar" onclick="addfav('<%=coin.coin_id%>, <%=user_id%>')"><img id="favstar" src="/img/emptystar.png" class="max-w-[40px] max-h-[40px]"></button>
+                            <button id="buttonfavstar" onclick="addfav('<%=coin.coin_id%>', '<%=user_id%>')"><img id="favstar" src="/img/emptystar.png" class="max-w-[40px] max-h-[40px] mr-[10px]"></button>
                         <% } %>
                         <h1 class="font-bold text-4xl"><%= coin.name %></h1>
                         <h2 class="text-2xl ml-[20px] bg-[#FFC900] rounded-full p-[7px] pt-[3px] pb-[3px]">$<%= coin.abbreviation %></h2>
@@ -18,9 +18,9 @@
                         <h2 class="text-sm self-start ml-[5%]">Price:</h2>
                         <p class="text-2xl ml-[10px]">$<%= coin.price %></p>
                         <% if (coin.percent_change_24h >= 0) { %>
-                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-lime-500 rounded-full">+<%= coin.percent_change_24h %>%</p>
+                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-lime-500 rounded-full">+<%= coin.percent_change_24h.toFixed(2) %>%</p>
                         <% } else { %>
-                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-red-700 rounded-full">-<%= coin.percent_change_24h %>%</p>
+                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-red-700 rounded-full"><%= coin.percent_change_24h.toFixed(2) %>%</p>
                         <% } %>
                     </div>
                 </div>
@@ -91,24 +91,36 @@
             </div>
             <div id="coinStats" class="flex justify-around">
                 <div id="marketCap" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
-                    <h2>Market Cap:</h2>
-                    <p><%= coin.marketCap %>$</p>
+                    <h2 class="font-bold">Market Cap:</h2>
+                    <p class="text-right" id="market_cap"></p><script>treatNumber('<%=coin.market_cap%>','#market_cap', ' $')</script>
                 </div>
                 <div id="volume" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
-                    <h2>Volume:</h2>
-                    <p><%= coin.volume %>$</p>
+                    <h2 class="font-bold">Volume (24h):</h2>
+                    <% if (coin.volume_24h >0) { %>
+                        <p class="text-right" id="volume_24h"></p><script>treatNumber('<%=coin.volume_24h%>','#volume_24h', ' $ (+<%= coin.volume_change_24h.toFixed(2) %>%)')</script>
+                    <% } else { %>
+                        <p class="text-right" id="volume_24h"></p><script>treatNumber('<%=coin.volume_24h%>','#volume_24h', ' $ (<%= coin.volume_change_24h.toFixed(2) %>%)')</script>
+                    <% } %>
+                    </div>
+                <div id="circulatingSupply" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
+                    <h2 class="font-bold">Circulating Supply:</h2>
+                    <p class="text-right" id="circulating_supply"></p><script>treatNumber('<%=coin.circulating_supply%>','#circulating_supply', ' <%= coin.abbreviation %>')</script>
                 </div>
-                <div id="supply" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
-                    <h2>Supply:</h2>
-                    <p><%= coin.supply %> <%= coin.abbreviation %></p>
+                <div id="maxSupply" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
+                    <h2 class="font-bold">Max Supply:</h2>
+                    <% if (coin.max_supply != null) { %>
+                        <p class="text-right" id="max_supply"></p><script>treatNumber('<%=coin.max_supply%>','#max_supply', ' <%= coin.abbreviation %>')</script>
+                    <% } else { %>
+                        <p class="text-right">∞</p>
+                    <% } %>
                 </div>
                 <div id="dominance" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
-                    <h2>Market Dominance:</h2>
-                    <p><%= coin.volume %>%</p>
+                    <h2 class="font-bold">Market Dominance:</h2>
+                    <p class="text-right"><%= coin.market_cap_dominance.toFixed(2) %>%</p>
                 </div>
                 <div id="change24" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
-                    <h2>Price Change (24h):</h2>
-                    <p>$<%= coin.price %></p>
+                    <h2 class="font-bold">Price Change (24h):</h2>
+                    <p class="text-right">$<%= coin.price %></p>
                 </div>
             </div>
             <div id="coinDescription" class="mt-[20px]">

@@ -47,6 +47,17 @@ app.get('/',async (req, res) => {
     res.render('home', {coins, favourites, favourites_ids,user_id})
 })
 
+app.get('/admin/add',async(req, res) => {
+    let user_id = req.session.user_id
+    res.render('admin', {user_id})
+    /*let role = await consulta("Select * from Users where user_id ="+user_id+";");
+    if (role=="admin") {
+        res.render('admin')
+    } else {
+        res.render('noAccess')
+    }*/
+})
+
 app.get('/login',(req, res) => {
     let user_id = req.session.user_id
     res.render('account',{ form : "partials/login.ejs",user_id })
@@ -159,7 +170,7 @@ app.get('/coin/:abb',auth, async (req, res) => {
             favourite_id = favourite.favourites_id
         }
     });
-    res.render('coin', {coin, contracts, socials, favourites, isfavourite, favourite_id,user_id})
+    res.render('coin', {coin, contracts, socials, favourites, isfavourite, favourite_id, user_id})
 })
 
 app.get('/portfolio/:id', auth,async (req, res) => {
@@ -173,8 +184,12 @@ app.get('/portfolio/:id', auth,async (req, res) => {
     // Getting user's favourite coins
     let favourites = await consulta('SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+user_id+' ORDER BY c.name;');
     // Getting the assets from the portfolio we wanna show
-    let assets = await consulta('SELECT c.coin_id, c.name, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.portfolio_id='+portfolio_id+';');
-    res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id})
+    let assets = await consulta('SELECT c.coin_id, c.name, c.abbreviation, c.price, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.portfolio_id='+portfolio_id+';');
+    let totalPortfolio = 0
+    assets.forEach(function(asset) {
+        totalPortfolio += parseInt((asset.price*asset.amount).toFixed(2))
+    })
+    res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id, totalPortfolio, user_id})
 })
 
 app.get('/consulta/:query', async(req,res) =>{
