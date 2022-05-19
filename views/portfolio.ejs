@@ -120,10 +120,10 @@
                     <div id="title" class="flex">
                         <h1 class="font-bold text-2xl"><%= portfolio.name %>: <%= totalPortfolio%>$</h1>
                         <% if (balance_last_24h) { %>
-                            <% if (balance_last_24h<0) { %>
-                                <p class="ml-[10px] p-[2px] px-[4px] bg-lime-600 rounded-full">+ <%= balance_last_24h.toFixed(2) %>%</p>
+                            <% if (balance_last_24h>=0) { %>
+                                <p id="balancePortfolio" class="ml-[10px] p-[2px] px-[4px] bg-lime-600 rounded-full">+ <%= balance_last_24h.toFixed(2)%>%</p>
                             <% } else { %>
-                                <p class="ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full">- <%= balance_last_24h.toFixed(2)%>%</p>
+                                <p id="balancePortfolio" class="ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full"><%= balance_last_24h.toFixed(2)%>%</p>
                             <% } %>
                         <% } %>
                     </div>
@@ -222,8 +222,13 @@
                                     option.xAxis.axisLabel.interval = 96
                                     option.yAxis.min = min2
                                     flag = true
-                                    $('#7d').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
                                     $('#24h').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
+                                    $('#7d').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
+                                    if (parseInt("<%=balance_last_7d%>")>=0) {
+                                        $("#balancePortfolio").text('+ '+parseInt("<%=balance_last_7d%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-lime-600 rounded-full")
+                                    } else {
+                                        $("#balancePortfolio").text(parseInt("<%=balance_last_7d%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full")
+                                    }
                                 }else{
                                     option.title.text = 'balance chart 7 days'
                                     option.xAxis.data = historicals_portfolio_1day_keys;
@@ -233,6 +238,11 @@
                                     flag = false
                                     $('#24h').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
                                     $('#7d').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
+                                    if (parseInt("<%=balance_last_24h%>")>=0) {
+                                        $("#balancePortfolio").text('+ '+parseInt("<%=balance_last_24h%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-lime-600 rounded-full")
+                                    } else {
+                                        $("#balancePortfolio").text(parseInt("<%=balance_last_24h%>").toFixed(2)+'%').attr("class","ml-[10px] p-[2px] px-[4px] bg-red-700 rounded-full")
+                                    }
                                 }
                                 myChart.setOption(option);
                             })

@@ -233,7 +233,8 @@ app.get('/portfolio/:id', auth,async (req, res) => {
             totalPortfolio += parseInt((asset.price*asset.amount).toFixed(2))
         })
         let balance_last_24h = ((totalPortfolio / historicals_portfolio_1day_values[0]) -1) *100
-        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id, historicals_portfolio_1day_keys, historicals_portfolio_1day_values, historicals_portfolio_7day_keys, historicals_portfolio_7day_values, totalPortfolio, balance_last_24h})
+        let balance_last_7d = ((totalPortfolio / historicals_portfolio_7day_values[0]) -1) *100
+        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id, historicals_portfolio_1day_keys, historicals_portfolio_1day_values, historicals_portfolio_7day_keys, historicals_portfolio_7day_values, totalPortfolio, balance_last_24h, balance_last_7d})
     }else{
         res.status(404).render('404',{user_id});
     }

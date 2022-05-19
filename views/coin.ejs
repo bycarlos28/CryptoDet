@@ -18,9 +18,9 @@
                         <h2 class="text-sm self-start ml-[5%]">Price:</h2>
                         <p class="text-2xl ml-[10px]">$<%= coin.price %></p>
                         <% if (coin.percent_change_24h >= 0) { %>
-                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-lime-500 rounded-full">+<%= coin.percent_change_24h.toFixed(2) %>%</p>
+                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-lime-500 rounded-full">+<%= coin.percent_change_24h.toFixed(2) %>% (24h)</p>
                         <% } else { %>
-                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-red-700 rounded-full"><%= coin.percent_change_24h.toFixed(2) %>%</p>
+                            <p class="text-lg ml-[15px] p-[3px] pt-[1px] pb-[1px] bg-red-700 rounded-full"><%= coin.percent_change_24h.toFixed(2) %>% (24h)</p>
                         <% } %>
                     </div>
                 </div>
