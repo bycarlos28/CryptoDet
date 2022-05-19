@@ -374,7 +374,13 @@ async function addCoin(contracts,socials) {
 
 
     let network, token_address, type, platform, url
-    let query = 'INSERT INTO coins (coin_id, name, exchange, pair, abbreviation, description) VALUES ('+api_coin_id+', "'+coin_name+'", "'+coin_abbreviation+'", "'+coin_exchange+'","'+coin_pair+'","'+coin_description+'");'
+    let query = 'INSERT INTO coins (coin_id, name, exchange, pair, abbreviation, description, circulating_supply, total_supply, max_supply, price, volume_24h, volume_change_24h, percent_change_24h, market_cap, market_cap_dominance) VALUES ('+api_coin_id+', "'+coin_name+'", "'+coin_exchange+'","'+coin_pair+'", "'+coin_abbreviation+'", "'+coin_description+'", 0, 0, 0, 0, 0, 0, 0, 0, 0);'
+    await $.ajax({
+        url: "/consulta/"+query,
+        method: "GET",
+    });
+
+    query = 'INSERT INTO historicals (coin_id, range_days) VALUES ('+api_coin_id+',1) , ('+api_coin_id+',7);'
     await $.ajax({
         url: "/consulta/"+query,
         method: "GET",
@@ -390,17 +396,23 @@ async function addCoin(contracts,socials) {
         });
     }
 
-     for (var i = 1; i <= socials; i++) {
+    for (var i = 1; i <= socials; i++) {
         type= $('input[name="type_'+i+'"]').val()
         platform = $('input[name="platform_'+i+'"]').val()
         url = $('input[name="url_'+i+'"]').val()
-        query= 'INSERT INTO socials (coin_id, type, platform, url) VALUES ('+api_coin_id+',"'+type+'", "'+platform+'", "'+url+'");'
+        query= 'INSERT INTO socials (coin_id, type, platform, url) VALUES ('+api_coin_id+', "'+type+'", "'+platform+'", "'+url+'");'
+        console.log(query)
         await $.ajax({
             url: "/consulta/"+query,
             method: "GET",
+            success: function(result){
+                console.log(result)
+                spawnFeedbackBox("Success",  coin_name+" added to Database.")
+                //window.location="/admin/add"
+            }
         });
     }
-    window.location="/portfolio/"+portfolio_id
+    window.location="/admin/add"
     spawnFeedbackBox("success", coin_name+" ($"+coin_abbreviation+") added to the Database.")
 }
 

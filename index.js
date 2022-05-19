@@ -177,13 +177,20 @@ app.get('/coin/:abb', async (req, res) => {
         });
     }
     let historicals_1day = await consulta('select prices from historicals where coin_id ='+coin.coin_id+' and range_days=1;' )
-    historicals_1day = JSON.parse(historicals_1day[0].prices)
-    let historicals_1day_keys = Object.keys(historicals_1day)
-    let historicals_1day_values = Object.values(historicals_1day)
+    
     let historicals_7day = await consulta('select prices from historicals where coin_id ='+coin.coin_id+' and range_days=7;' )
-    historicals_7day = JSON.parse(historicals_7day[0].prices)
-    let historicals_7day_keys = Object.keys(historicals_7day)
-    let historicals_7day_values = Object.values(historicals_7day)
+    let historicals_1day_keys = []
+    let historicals_1day_values = []
+    let historicals_7day_keys = []
+    let historicals_7day_values = []
+    try {
+        historicals_1day = JSON.parse(historicals_1day[0].prices)
+        historicals_1day_keys = Object.keys(historicals_1day)
+        historicals_1day_values = Object.values(historicals_1day)
+        historicals_7day = JSON.parse(historicals_7day[0].prices)
+        historicals_7day_keys = Object.keys(historicals_7day)
+        historicals_7day_values = Object.values(historicals_7day)
+    } catch(error) {}
     res.render('coin', {coin, contracts, socials, favourites, isfavourite, favourite_id,user_id,historicals_1day_keys,historicals_1day_values,historicals_7day_keys,historicals_7day_values})
 })
 
@@ -206,19 +213,27 @@ app.get('/portfolio/:id', auth,async (req, res) => {
         let assets = await consulta('SELECT c.coin_id, c.name, c.price, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.portfolio_id='+portfolio_id+';');
         
         let historicals_portfolio_1day = await consulta('select prices from historicals_portfolio where portfolio_id ='+portfolio.portfolio_id+' and range_days=1;' )
-        historicals_portfolio_1day = JSON.parse(historicals_portfolio_1day[0].prices)
-        let historicals_portfolio_1day_keys = Object.keys(historicals_portfolio_1day)
-        let historicals_portfolio_1day_values = Object.values(historicals_portfolio_1day)
-
         let historicals_portfolio_7day = await consulta('select prices from historicals_portfolio where portfolio_id ='+portfolio.portfolio_id+' and range_days=7;' )
-        historicals_portfolio_7day = JSON.parse(historicals_portfolio_7day[0].prices)
-        let historicals_portfolio_7day_keys = Object.keys(historicals_portfolio_7day)
-        let historicals_portfolio_7day_values = Object.values(historicals_portfolio_7day)
+        let historicals_portfolio_1day_keys = []
+        let historicals_portfolio_1day_values = []
+        let historicals_portfolio_7day_keys = []
+        let historicals_portfolio_7day_values = []
+
+        try {
+            historicals_portfolio_1day = JSON.parse(historicals_portfolio_1day[0].prices)
+            historicals_portfolio_1day_keys = Object.keys(historicals_portfolio_1day)
+            historicals_portfolio_1day_values = Object.values(historicals_portfolio_1day)
+
+            historicals_portfolio_7day = JSON.parse(historicals_portfolio_7day[0].prices)
+            historicals_portfolio_7day_keys = Object.keys(historicals_portfolio_7day)
+            historicals_portfolio_7day_values = Object.values(historicals_portfolio_7day)
+        } catch(error) { }
         let totalPortfolio = 0
         assets.forEach(function(asset) {
             totalPortfolio += parseInt((asset.price*asset.amount).toFixed(2))
         })
-        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id, historicals_portfolio_1day_keys, historicals_portfolio_1day_values, historicals_portfolio_7day_keys, historicals_portfolio_7day_values, totalPortfolio})
+        let balance_last_24h = ((totalPortfolio / historicals_portfolio_1day_values[0]) -1) *100
+        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id, historicals_portfolio_1day_keys, historicals_portfolio_1day_values, historicals_portfolio_7day_keys, historicals_portfolio_7day_values, totalPortfolio, balance_last_24h})
     }else{
         res.status(404).render('404',{user_id});
     }
