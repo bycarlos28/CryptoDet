@@ -15,7 +15,9 @@ app.use('/js', express.static(path.join(__dirname, 'public/javascripts')))
 app.use('/css', express.static(path.join(__dirname, 'public/stylesheets')))
 app.use('/img', express.static(path.join(__dirname, 'public/images')))
 app.set('view engine', 'ejs');
+import {getPrice_7days} from './public/javascripts/apiFunctions.js'
 
+await getPrice_7days()
 var auth = function(req, res, next) {
     if (req.session && req.session.user){
         return next();

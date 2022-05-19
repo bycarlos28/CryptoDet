@@ -2,7 +2,7 @@ import {consulta} from './mysqlConector.js';
 import {conection} from './apiConector.js'
 async function getAbbreviation(){
     let coins = []
-    let query = await consulta("select exchange, pair from Coins;")
+    let query = await consulta("select exchange, pair from Coins order by coin_id;")
     for(let i=0; i != query.length; i++){
         coins.push([query[i]['exchange'],query[i]['pair']])
     }
@@ -11,7 +11,7 @@ async function getAbbreviation(){
 
 async function getCoinID(){
     let coins_id = []
-    let datos = await consulta("select coin_id from Coins;")
+    let datos = await consulta("select coin_id from Coins order by coin_id;")
     for(let i=0; i != datos.length; i++){
         coins_id.push(datos[i]['coin_id'])
     }
@@ -28,18 +28,22 @@ async function getPortfolioID(){
 
 async function getPrices(){
     let coins_historicals = []
-    let datos = await consulta("select coin_id, prices from Historicals where range_days = 1;")
+    let datos = await consulta("select coin_id, prices from Historicals where range_days = 1 order by coin_id;")
     for(let i=0; i != datos.length; i++){
-        coins_historicals.push([datos[i]['coin_id'],datos[i]['prices']])
+        if(datos[i]['coin_id'] != undefined){
+            coins_historicals.push([datos[i]['coin_id'],datos[i]['prices']])
+        }
     }
     return coins_historicals
 }
 
 async function getPrices_7days(){
     let coins_historicals = []
-    let datos = await consulta("select coin_id, prices from Historicals where range_days = 7;")
+    let datos = await consulta("select coin_id, prices from Historicals where range_days = 7 order by coin_id;")
     for(let i=0; i != datos.length; i++){
-        coins_historicals.push([datos[i]['coin_id'],datos[i]['prices']])
+        if(datos[i]['coin_id'] != undefined){
+            coins_historicals.push([datos[i]['coin_id'],datos[i]['prices']])
+        }
     }
     return coins_historicals
 }
@@ -61,7 +65,6 @@ async function getPrice(){
     let current_date;
     let coins = await getAbbreviation()
     let coins_historicals = await getPrices()
-
     for(let i = 0; i != coins.length;i++){
         let url = "https://api.cryptowat.ch/markets/"+coins[i][0]+"/"+coins[i][1]+"/summary"
         let precio = await conection(url,market_data)
@@ -72,14 +75,14 @@ async function getPrice(){
     for(let e=0; e != coins_price.length; e++){
         let prices = await consulta("UPDATE Coins SET price = "+coins_price[e][1]+", percent_change_24h = "+coins_price[e][2]+", volume_24h = "+coins_price[e][3]+", last_updated = '"+coins_price[e][4]+"' WHERE pair like '"+coins_price[e][0]+"';")
     }
-    for(let y=0; y != coins_historicals.length; y++){
+    for(let y=0; y != (coins_historicals.length); y++){
         let a = coins_historicals[y][1]
         if(a == undefined){
-        current_date = getDatetime()
-        let prices_data = {
-            [current_date]:  coins_historicals[y][1]
-        }
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
+            current_date = getDatetime()
+            let prices_data = {
+                [current_date]:  coins_historicals[y][1]
+            }
+            let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
         }else{
             current_date = getDatetime()
             let prices_json = JSON.parse(a)
@@ -95,8 +98,8 @@ async function getPrice(){
                 }
                 prices_json = json_prices
             }
-        prices_json[current_date] = coins_price[y][1]
-        let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
+            prices_json[current_date] = coins_price[y][1]
+            let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
         }
     }
 }
