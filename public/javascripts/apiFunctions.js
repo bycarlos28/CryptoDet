@@ -81,12 +81,20 @@ async function getPrice(){
         }
         let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
         }else{
-        current_date = getDatetime()
-        let prices_json = JSON.parse(a)
-        if(prices_json.length == 288){
-            let first_key = Object.keys(prices_json)[0]
-            delete prices_json[first_key]
-        }
+            current_date = getDatetime()
+            let prices_json = JSON.parse(a)
+            let keys = Object.keys(prices_json);
+            let values = Object.values(prices_json);
+            if(keys.length >= 288){
+                let num = keys.length - 289;
+                let lista_keys = keys.slice(num,keys.length)
+                let lista_values = values.slice(num,keys.length)
+                let json_prices = {};
+                for(let i=0; i != lista_keys.length; i++){
+                    json_prices[lista_keys[i]] = lista_values[i]
+                }
+                prices_json = json_prices
+            }
         prices_json[current_date] = coins_price[y][1]
         let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_json)+"' where coin_id = "+coins_historicals[y][0]+" and range_days = 1;")
         }
@@ -115,9 +123,17 @@ async function getPrice_7days(){
             let prices = await consulta("UPDATE Historicals SET prices = '"+JSON.stringify(prices_data)+"' where coin_id = "+coins_historicals[i][0]+" and range_days = 7;")
         }else{
             let prices_json = JSON.parse(coins_historicals[i][1])
-            if(prices_json.length == 672){
-                let first_key = Object.keys(prices_json)[0]
-                delete prices_json[first_key]
+            let keys = Object.keys(prices_json);
+            let values = Object.values(prices_json);
+            if(keys.length == 672){
+                let num = keys.length - 673;
+                let lista_keys = keys.slice(num,keys.length)
+                let lista_values = values.slice(num,keys.length)
+                let json_prices = {};
+                for(let y=0; y != lista_keys.length; y++){
+                    json_prices[lista_keys[y]] = lista_values[y]
+                }
+                prices_json = json_prices
             }
             current_date = getDatetime()
             prices_json[current_date] = coins_price[i][1]
@@ -191,9 +207,17 @@ async function updatePortfolio(){
                 let prices = await consulta("UPDATE historicals_portfolio set prices = '"+JSON.stringify(prices_data)+"' where portfolio_id = "+portfolio_id[i]+" and range_days = 1");
             }else{
                 let prices_data = JSON.parse(portfolio_price[portfolio_id[i]])
-                if(prices_data.length == 288){
-                    let first_key = Object.keys(prices_data)[0]
-                    delete prices_data[first_key]
+                let keys = Object.keys(prices_data);
+                let values = Object.values(prices_data);
+                if(keys.length >= 288){
+                    let num = keys.length - 289;
+                    let lista_keys = keys.slice(num,keys.length)
+                    let lista_values = values.slice(num,keys.length)
+                    let json_prices = {};
+                    for(let y=0; y != lista_keys.length; y++){
+                        json_prices[lista_keys[y]] = lista_values[y]
+                    }
+                    prices_data = json_prices
                 }
                 current_date = getDatetime()
                 prices_data[current_date] = precio_total
@@ -227,9 +251,18 @@ async function updatePortfolio_7days(){
                 let prices = await consulta("UPDATE historicals_portfolio set prices = '"+JSON.stringify(prices_data)+"' where portfolio_id = "+portfolio_id[i]+" and range_days = 7");
             }else{
                 let prices_data = JSON.parse(portfolio_price[portfolio_id[i]])
-                if(prices_data.length == 672){
-                    let first_key = Object.keys(prices_data)[0]
-                    delete prices_data[first_key]
+                let keys = Object.keys(prices_data);
+                let values = Object.values(prices_data);
+                if(keys.length == 672){
+                    let num = keys.length - 673;
+                    let lista_keys = keys.slice(num,keys.length)
+                    let lista_values = values.slice(num,keys.length)
+                    let json_prices = {};
+                    for(let y=0; y != lista_keys.length; y++){
+                        json_prices[lista_keys[y]] = lista_values[y]
+                    }
+                    prices_data = json_prices
+
                 }
                 current_date = getDatetime()
                 prices_data[current_date] = precio_total
@@ -240,6 +273,7 @@ async function updatePortfolio_7days(){
 }
 
 export{
+    getPrices,
     getPrice,
     getDataCoin,
     getPrice_7days,
