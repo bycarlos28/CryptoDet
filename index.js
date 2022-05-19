@@ -47,6 +47,17 @@ app.get('/',async (req, res) => {
     res.render('home', {coins, favourites, favourites_ids,user_id})
 })
 
+app.get('/admin/add',async(req, res) => {
+    let user_id = req.session.user_id
+    res.render('admin', {user_id})
+    /*let role = await consulta("Select * from Users where user_id ="+user_id+";");
+    if (role=="admin") {
+        res.render('admin')
+    } else {
+        res.render('noAccess')
+    }*/
+})
+
 app.get('/login',(req, res) => {
     let user_id = req.session.user_id
     res.render('account',{ form : "partials/login.ejs",user_id })
@@ -203,6 +214,10 @@ app.get('/portfolio/:id', auth,async (req, res) => {
         historicals_portfolio_7day = JSON.parse(historicals_portfolio_7day[0].prices)
         let historicals_portfolio_7day_keys = Object.keys(historicals_portfolio_7day)
         let historicals_portfolio_7day_values = Object.values(historicals_portfolio_7day)
+        let totalPortfolio = 0
+        assets.forEach(function(asset) {
+            totalPortfolio += parseInt((asset.price*asset.amount).toFixed(2))
+        })
         res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id,historicals_portfolio_1day_keys,historicals_portfolio_1day_values,historicals_portfolio_7day_keys,historicals_portfolio_7day_values})
     }else{
         res.redirect('/')

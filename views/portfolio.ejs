@@ -42,13 +42,13 @@
             history_data.forEach(element => {
                 treatedDate = element.tx_date.split("-")[2].slice(0,2)+'/'+element.tx_date.split("-")[1]+'/'+element.tx_date.split("-")[0]+ " " + element.tx_date.split("T")[1].split(":")[0]+ ":" + element.tx_date.split("T")[1].split(":")[1]
                 allTrs = allTrs +
-                '<tr class="hover:bg-[#fffbb8]">'+
+                '<tr id="tr_tx_'+element.transaction_id+'" class="hover:bg-[#fffbb8]">'+
                     '<td><p>'+element.type+'</p></td>'+
                     '<td><p>'+element.asset_price+'</p></td>'+
                     '<td>'+element.tx_amount+'</td>'+
                     '<td><p>'+(element.asset_price*element.tx_amount).toFixed(2)+'</p></td>'+
                     '<td>'+treatedDate+'</td>'+
-                    '<td class="flex justify-center"><a href="../confirmdelete/transaction/'+element.transaction_id+'" rel="modal:open"><img class="max-w-[17px] max-h-[17px] mr-[10px]" src="/img/delete_black.png"></a></td>'+
+                    '<td class="flex justify-center"><a href="/confirmdelete/transaction/'+element.transaction_id+'" rel="modal:open"><img class="max-w-[17px] max-h-[17px] mr-[10px]" src="/img/delete_black.png"></a></td>'+
                 '</tr>'
             })
             document.getElementById("tx_history").innerHTML = (
@@ -118,11 +118,11 @@
             <div id="portfolios" class="w-[50%] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A] pt-[30px] pl-[5%]">
                 <div id="portfolio-header" class="flex justify-between">
                     <div id="title" class="flex">
-                        <h1 class="font-bold text-2xl"><%= portfolio.name %>: 100$</h1>
+                        <h1 class="font-bold text-2xl"><%= portfolio.name %>: <%= totalPortfolio%>$</h1>
                         <p class="ml-[10px] p-[2px] bg-lime-600 rounded-full">+10%</p>
                     </div>
                     <div>
-                        <a class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] flex text-white" href="../confirmdelete/portfolio/<%= portfolio_id %>" rel="modal:open"><img src="/img/delete.png" class="max-w-[15xp] max-h-[20px] mt-[3px] mr-[5px]">Delete portfolio</a>
+                        <a class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] flex text-white" href="/confirmdelete/portfolio/<%= portfolio_id %>" rel="modal:open"><img src="/img/delete.png" class="max-w-[15xp] max-h-[20px] mt-[3px] mr-[5px]">Delete portfolio</a>
                     </div>
                 </div>
                 <div id="chart" style="width: 100%;height:400px;">
@@ -218,6 +218,7 @@
                     <table id="assets_table" class="ml-[20px] table-auto">
                         <thead>
                             <tr class="font-bold">
+                                <th></th>
                                 <th class="sortable_th w-[25%]">
                                     <div class="flex items-center">
                                         <p>Name</p>
@@ -226,7 +227,7 @@
                                 </th>
                                 <th class="sortable_th w-[20%]">
                                     <div class="flex items-center">
-                                        <p>Price</p>
+                                        <p>Price ($)</p>
                                         <img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">
                                     </div>
                                 </th>
@@ -238,7 +239,7 @@
                                 </th>
                                 <th class="sortable_th w-[30%]">
                                     <div class="flex items-center">
-                                        <p>Profit/Loss</p>
+                                        <p>Profit/Loss ($)</p>
                                         <img class="max-w-[10px] max-h-[10px] ml-[5px]" src="/img/sortable.png">
                                     </div>
                                 </th>
@@ -248,13 +249,14 @@
                         <tbody>
                             <% assets.forEach(function(asset){%>
                                 <tr class="hover:bg-[#fffbb8]">
-                                    <td><a href="../coin/<%=asset.abbreviation.toLowerCase()%>"><%=asset.name%> ($<%=asset.abbreviation%>)</a></td>
-                                    <td>(Precio ATR)$</td>
+                                    <td><img src="/img/currencies/<%= asset.abbreviation.toLowerCase()%>.png" class="max-w-[20px] max-h-[20px] mr-[10px]"></td>
+                                    <td><a href="/coin/<%=asset.abbreviation.toLowerCase()%>"><%=asset.name%> ($<%=asset.abbreviation%>)</a></td>
+                                    <td><%= asset.price %></td>
                                     <td><%=asset.amount%> <%=asset.abbreviation%></td>
-                                    <td>(Precio * <%=asset.amount%>)-<%=asset.spended%>$</td>
+                                    <td><%= ((asset.price*asset.amount) - asset.spended).toFixed(2)%></td>
                                     <td class="text-2xl">
                                         <div class="flex">
-                                            <a class="font-bold mr-[5px]" href="../addAsset/<%= portfolio_id %>/<%= asset.coin_id%>" rel="modal:open">+</a>|
+                                            <a class="font-bold mr-[5px]" href="/addAsset/<%= portfolio_id %>/<%= asset.coin_id%>" rel="modal:open">+</a>|
                                             <a id="<%=asset.coin_id%>" class="display_actions font-bold ml-[5px]"><img class="max-w-[17px] max-h-[17px] mt-[10px]" src="/img/3dots.png"></a>
                                         </div>
                                         <ul id="actions_<%=asset.coin_id%>" class="absolute shadow-lg shadow-white mt-[5px]" size="5" style="display:none">
@@ -267,7 +269,7 @@
                                             <li class="hover:cursor-pointer border-[1px] border-solid border-slate-300 p-[5px] pr-[10px] pl-[10px] bg-gradient-to-b from-[#FCF8BD] to-[#FFF89A]">
                                                 <div class="flex">
                                                     <img class="max-w-[20px] max-h-[20px] mt-[2px] mr-[10px]" src="/img/delete_black.png">
-                                                    <a class="text-lg font-normal" href="../confirmdelete/asset/<%= asset.coin_id%>" rel="modal:open">Delete asset</a>
+                                                    <a class="text-lg font-normal" href="/confirmdelete/asset/<%= asset.coin_id%>" rel="modal:open">Delete asset</a>
                                                 </div>
                                             </li>
                                         </ul>

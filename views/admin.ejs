@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%-include("partials/header.ejs", {title:"CryptoDet - Track your portfolio", user_id: user_id}) %>
+    <div class="ml-[15%] mr-[15%] mt-[20px]">
+        <h2 class="text-3xl font-bold">Add a new coin into the Database:</h2>
+        <form class="ml-[10%] mt-[10px]">
+            <h3 class="text-xl font-bold underline">Basics:</h3>
+            <div class="flex">
+                <p class="text-lg mr-[15px]">Coin Name:</p>
+                <input required class="pl-[15px] border-[1px]" type="text" name="coin_name">
+            </div>
+            <div class="flex mt-[10px]">
+                <p class="text-lg mr-[15px]">Coin Abbreviation:</p>
+                <input required class="pl-[15px] border-[1px]" type="text" name="coin_abbreviation">
+            </div>
+            <div class="flex mt-[10px]">
+                <p class="text-lg mr-[15px]">Coin Description:</p>
+                <input required class="pl-[15px] border-[1px]" type="text" name="coin_description">
+            </div>
+
+
+            <h3 class="text-xl font-bold underline">API Details:</h3>
+            <div class="flex">
+                <p class="text-lg mr-[15px]">Coinmarketcap's API ID:</p>
+                <input required class="pl-[15px] border-[1px]" type="text" name="api_coin_id">
+            </div>
+            <div class="flex mt-[10px]">
+                <p class="text-lg mr-[15px]">Exchange:</p>
+                <input required class="pl-[15px] border-[1px]" type="text" name="coin_exchange">
+            </div>
+            <div class="flex mt-[10px]">
+                <p class="text-lg mr-[15px]">Pair:</p>
+                <input required class="pl-[15px] border-[1px]" type="text" name="coin_pair">
+            </div>
+
+
+            <div class="flex mt-[15px]">
+                <h3 class="text-xl font-bold underline">Contracts (optional):</h3>
+                <p id="addContractFieldButton" class="rounded-xl ml-[40px] px-[4px] bg-[#FFC900] max-w-[120px] hover:cursor-pointer" onclick="addContractField(1,1)">+ Add contract</p>
+            </div>
+            <div id="contract_1">
+                <div class="flex mt-[10px]">
+                    <p class="text-lg mr-[15px]">Network:</p>
+                    <input class="pl-[15px] border-[1px]" type="text" name="network_1">
+                </div>
+                <div class="flex my-[10px]">
+                    <p class="text-lg mr-[15px]">Token Address:</p>
+                    <input class="pl-[15px] border-[1px]" type="text" name="token_address_1">
+                </div>
+            </div>
+
+
+            <div class="flex mt-[15px]">
+                <h3 class="text-xl font-bold underline">Socials (optional):</h3>
+                <p id="addSocialFieldButton" class="rounded-xl ml-[40px] px-[4px] bg-[#FFC900] max-w-[100px] hover:cursor-pointer" onclick="addSocialField(1,1)">+ Add social</p>
+            </div>
+            <div id="social_1">
+                <div class="flex mt-[10px]">
+                    <p class="text-lg mr-[15px]">Type:</p>
+                    <input class="pl-[15px] border-[1px]" type="text" name="type_1">
+                </div>
+                <div class="flex mt-[10px]">
+                    <p class="text-lg mr-[15px]">Platform:</p>
+                    <input class="pl-[15px] border-[1px]" type="text" name="platform_1">
+                </div>
+                <div class="flex my-[10px]">
+                    <p class="text-lg mr-[15px]">URL:</p>
+                    <input class="pl-[15px] border-[1px]" type="text" name="url_1">
+                </div>
+            </div>
+            <button id="addCoinButton" class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900] max-w-[80px] mt-[20px]" onclick="addCoin(1,1)">Add Coin</button>
+        </form>
+    </div>
