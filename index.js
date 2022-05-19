@@ -47,15 +47,15 @@ app.get('/',async (req, res) => {
     res.render('home', {coins, favourites, favourites_ids,user_id})
 })
 
-app.get('/admin/add',async(req, res) => {
+app.get('/admin/add', auth, async(req, res) => {
     let user_id = req.session.user_id
-    res.render('admin', {user_id})
-    /*let role = await consulta("Select * from Users where user_id ="+user_id+";");
-    if (role=="admin") {
-        res.render('admin')
+    let user = await consulta("Select * from users where user_id ="+user_id+";");
+
+    if (user[0].role=="admin") {
+        res.render('admin', {user_id})
     } else {
-        res.render('noAccess')
-    }*/
+        res.status(404).render('404', {user_id})
+    }
 })
 
 app.get('/login',(req, res) => {
@@ -203,7 +203,7 @@ app.get('/portfolio/:id', auth,async (req, res) => {
         // Getting user's favourite coins
         let favourites = await consulta('SELECT f.favourites_id, f.user_id, f.coin_id, c.name, c.abbreviation FROM favourites f INNER JOIN coins c ON f.coin_id = c.coin_id WHERE f.user_id='+user_id+' ORDER BY c.name;');
         // Getting the assets from the portfolio we wanna show
-        let assets = await consulta('SELECT c.coin_id, c.name, c.abbreviation,c.price, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.portfolio_id='+portfolio_id+';');
+        let assets = await consulta('SELECT c.coin_id, c.name, c.price, c.abbreviation, a.amount, a.spended FROM assets a INNER JOIN coins c ON a.coin_id=c.coin_id INNER JOIN portfolios p ON a.portfolio_id=p.portfolio_id WHERE p.portfolio_id='+portfolio_id+';');
         
         let historicals_portfolio_1day = await consulta('select prices from historicals_portfolio where portfolio_id ='+portfolio.portfolio_id+' and range_days=1;' )
         historicals_portfolio_1day = JSON.parse(historicals_portfolio_1day[0].prices)
@@ -218,7 +218,7 @@ app.get('/portfolio/:id', auth,async (req, res) => {
         assets.forEach(function(asset) {
             totalPortfolio += parseInt((asset.price*asset.amount).toFixed(2))
         })
-        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id,historicals_portfolio_1day_keys,historicals_portfolio_1day_values,historicals_portfolio_7day_keys,historicals_portfolio_7day_values,totalPortfolio})
+        res.render('portfolio', {portfolios, portfolio, favourites, assets, portfolio_id,user_id, historicals_portfolio_1day_keys, historicals_portfolio_1day_values, historicals_portfolio_7day_keys, historicals_portfolio_7day_values, totalPortfolio})
     }else{
         res.status(404).render('404',{user_id});
     }

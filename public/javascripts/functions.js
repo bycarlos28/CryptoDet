@@ -414,7 +414,7 @@ function addContractField(contracts, socials) {
                                                                                         '<div class="flex my-[10px]">'+
                                                                                             '<p class="text-lg mr-[15px]">Token Address:</p>'+
                                                                                             '<input id="lastInputContract_'+contracts+'" required class="pl-[15px] border-[1px]" type="text" name="token_address_'+contracts+'">'+
-                                                                                            '<p id="deleteContract_'+contracts+'" onclick="deleteContractField('+contracts+')"><img src="/img/delete.png" class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px]"></p>'+
+                                                                                            '<p id="deleteContract_'+contracts+'" onclick="deleteContractField('+contracts+')"><img src="/img/delete.png" class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px] hover:cursor-pointer"></p>'+
                                                                                             '</div>'
     ))
     $('#addCoinButton').attr("onclick", "addCoin("+contracts+","+socials+")")
@@ -436,7 +436,7 @@ function addSocialField(contracts, socials) {
                                                                             '<div class="flex my-[10px]">'+
                                                                                 '<p class="text-lg mr-[15px]">URL:</p>'+
                                                                                 '<input id="lastInputSocial_'+socials+'" required class="pl-[15px] border-[1px]" type="text" name="url_'+socials+'">'+
-                                                                                '<p id="deleteSocial_'+socials+'" onclick="deleteSocialField('+socials+')"><img src="/img/delete.png" class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px]"></p>'+
+                                                                                '<p id="deleteSocial_'+socials+'" onclick="deleteSocialField('+socials+')"><img src="/img/delete.png" class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px] hover:cursor-pointer"></p>'+
                                                                             '</div>'
     ))
     $('#addCoinButton').attr("onclick", "addCoin("+contracts+","+socials+")")
@@ -446,7 +446,7 @@ function addSocialField(contracts, socials) {
 
 function deleteContractField(idToDelete) {
     $("#contract_"+idToDelete).remove()
-    $("<p>").attr("id","deleteContract_"+(idToDelete-1)).attr("onclick", "deleteContractField("+(idToDelete-1)+")").append($("<img>").attr("src","/img/delete.png").attr("class","rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px]")).insertAfter($("#lastInputContract_"+(idToDelete-1)))
+    $("<p>").attr("id","deleteContract_"+(idToDelete-1)).attr("onclick", "deleteContractField("+(idToDelete-1)+")").append($("<img>").attr("src","/img/delete.png").attr("class","rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px] hover:cursor-pointer")).insertAfter($("#lastInputContract_"+(idToDelete-1)))
     newContracts= parseInt($("#addCoinButton").attr("onclick").slice(-4,-3)-1)
     socials= $("#addCoinButton").attr("onclick").slice(-2,-1)
     $('#addCoinButton').attr("onclick", "addCoin("+newContracts+","+socials+")")
@@ -456,7 +456,7 @@ function deleteContractField(idToDelete) {
 
 function deleteSocialField(idToDelete) {
     $("#social_"+idToDelete).remove()
-    $("<p>").attr("id","deleteSocial_"+(idToDelete-1)).attr("onclick", "deleteSocialField("+(idToDelete-1)+")").append($("<img>").attr("src","/img/delete.png").attr("class","rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px]")).insertAfter($("#lastInputSocial_"+(idToDelete-1)))
+    $("<p>").attr("id","deleteSocial_"+(idToDelete-1)).attr("onclick", "deleteSocialField("+(idToDelete-1)+")").append($("<img>").attr("src","/img/delete.png").attr("class","rounded-xl p-[4px] pt-[2px] bg-[#d11514] max-w-[10xp] max-h-[25px] mt-[3px] ml-[35px] hover:cursor-pointer")).insertAfter($("#lastInputSocial_"+(idToDelete-1)))
     contracts= $("#addCoinButton").attr("onclick").slice(-4,-3)
     newSocials= parseInt($("#addCoinButton").attr("onclick").slice(-2,-1))-1
     $('#addCoinButton').attr("onclick", "addCoin("+contracts+","+newSocials+")")
