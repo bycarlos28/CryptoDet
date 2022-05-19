@@ -58,26 +58,43 @@
                     <% } %>
                 </div>
             </div>
+            <button id="change" class="flex rounded-lg bg-amber-300">
+                <p id="24h" class="px-[5px] bg-amber-400 rounded-lg text-lg">24h</p>
+                <p id="7d"class="px-[5px] bg-amber-300 rounded-lg text-lg">7 days</p>
+            </button>
             <div id="chart" class="w-full h-[400px] mt-[20px]">
                 <script type="text/javascript">
                     let historicals_1day_keys = '<%= historicals_1day_keys %>'.split(',');
                     for(let i=0; i != historicals_1day_keys.length; i++){
-                        historicals_1day_keys[i] = historicals_1day_keys[i].split('.')[0].slice(0, -3).split(' ')[1];
+                        historicals_1day_keys[i] = historicals_1day_keys[i].split('.')[0].slice(0, -3);
                     }
                     let historicals_1day_values = '<%= historicals_1day_values %>'.split(',');
-
+                    let lista_int = []
+                    for(let e=0; e != historicals_1day_values.length; e++){
+                        console.log(typeof(parseInt(historicals_1day_values[e])))
+                        lista_int.push(parseInt(historicals_1day_values[e]))
+                    }
+                    let max = Math.max.apply(null,lista_int)
+                    let min = Math.min.apply(null,lista_int)
+                    min =  min - ((max- min) * 0.15)
                     let historicals_7day_keys = '<%= historicals_7day_keys %>'.split(',');
                     for(let i=0; i != historicals_7day_keys.length; i++){
-                        historicals_7day_keys[i] = historicals_7day_keys[i].split('.')[0].split(' ')[0].split('-')[2];
+                        historicals_7day_keys[i] = historicals_7day_keys[i].split('.')[0].slice(0, -3);
                     }
-                    console.log(historicals_1day_keys)
-                    console.log(historicals_7day_keys)
                     let historicals_7day_values = '<%= historicals_7day_values %>'.split(',');
+                    let lista_int2 = []
+                    for(let e=0; e != historicals_7day_values.length; e++){
+                        console.log(typeof(parseInt(historicals_7day_values[e])))
+                        lista_int2.push(parseInt(historicals_7day_values[e]))
+                    }
+                    let max2 = Math.max.apply(null,lista_int2)
+                    let min2 = Math.min.apply(null,lista_int2)
+                    min2 =  min2 - ((max2- min2) * 0.15)
                     // Initialize the echarts instance based on the prepared dom
                     var myChart = echarts.init(document.getElementById('chart'));
                     var option = {
                         title: {
-                            text: '<%= coin.name %> to USD Chart'
+                            text: '<%= coin.name %> to USD Chart 24h'
                         },
                         tooltip: {
                             trigger: 'axis',
@@ -96,15 +113,19 @@
                         },
                         xAxis: {
                             data: historicals_1day_keys,
+                            show: false,
                             axisLabel: {interval: 12, rotate: 60 }
                             
                         },
-                        yAxis: {},
+                        yAxis: {
+                            min: min
+                        },
                         series: [
                             {
                             name: 'usd',
                             type: 'line',
                             data: historicals_1day_values,
+                            areaStyle: {opacity: 0.36},
                             smooth: true,
                                 showSymbol: false,
                                 lineStyle: {
@@ -120,22 +141,29 @@
                             $('#change').click(function(){
                                 console.log('hola')
                                 if(flag == false){
+                                    option.title.text = '<%= coin.name %> to USD Chart 7days'
                                     option.xAxis.data = historicals_7day_keys;
                                     option.series.data = historicals_7day_values;
                                     option.xAxis.axisLabel.interval = 96
+                                    option.yAxis.min = min2
                                     flag = true
+                                    $('#7d').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
+                                    $('#24h').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
                                 }else{
+                                    option.title.text = '<%= coin.name %> to USD Chart 24h'
                                     option.xAxis.data = historicals_1day_keys;
                                     option.series.data = historicals_1day_values;
                                     option.xAxis.axisLabel.interval = 12
+                                    option.yAxis.min = min
                                     flag = false
+                                    $('#24h').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
+                                    $('#7d').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
                                 }
                                 myChart.setOption(option);
                             })
                         });
                 </script>
             </div>
-            <button id="change">click me</button>
             <div id="coinStats" class="flex justify-around">
                 <div id="marketCap" class="border-2 border-x-zinc-300 border-y-transparent pr-[10px] pl-[10px]">
                     <h2 class="font-bold">Market Cap:</h2>

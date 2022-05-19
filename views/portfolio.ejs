@@ -131,34 +131,45 @@
                         <a class="rounded-xl p-[4px] pt-[2px] bg-[#d11514] flex text-white" href="/confirmdelete/portfolio/<%= portfolio_id %>" rel="modal:open"><img src="/img/delete.png" class="max-w-[15xp] max-h-[20px] mt-[3px] mr-[5px]">Delete portfolio</a>
                     </div>
                 </div>
+                <button id="change" class="flex rounded-lg bg-amber-300">
+                    <p id="24h" class="px-[5px] bg-amber-400 rounded-lg text-lg">24h</p>
+                    <p id="7d"class="px-[5px] bg-amber-300 rounded-lg text-lg">7 days</p>
+                </button>
                 <div id="chart" style="width: 100%;height:400px;">
                     <script type="text/javascript">
                         let historicals_portfolio_1day_keys = '<%= historicals_portfolio_1day_keys %>'.split(',');
                         for(let i=0; i != historicals_portfolio_1day_keys.length; i++){
-                            historicals_portfolio_1day_keys[i] = historicals_portfolio_1day_keys[i].split('.')[0].slice(0, -3).split(' ')[1];
+                            historicals_portfolio_1day_keys[i] = historicals_portfolio_1day_keys[i].split('.')[0].slice(0, -3);
                         }
                         let historicals_portfolio_1day_values = '<%= historicals_portfolio_1day_values %>'.split(',');
+                        let lista_int = []
+                        for(let e=0; e != historicals_portfolio_1day_values.length; e++){
+                            lista_int.push(parseInt(historicals_portfolio_1day_values[e]))
+                        }
+                        let max = Math.max.apply(null,lista_int)
+                        let min = Math.min.apply(null,lista_int)
+                        min =  min - ((max- min) * 0.15)
 
 
                         let historicals_portfolio_7day_keys = '<%= historicals_portfolio_7day_keys %>'.split(',');
-                        let historicals_7day_keys_days = []
-                        for(let i=0; i != historicals_portfolio_7day_keys.length; i++){
-                            historicals_7day_keys_days[i] = historicals_portfolio_7day_keys[i].split('.')[0].split(' ')[0].split('-')[2];
-                        }
-
                         for(let i=0; i != historicals_portfolio_7day_keys.length; i++){
                             historicals_portfolio_7day_keys[i] = historicals_portfolio_7day_keys[i].split('.')[0].slice(0, -3);
                         }
-                        console.log(historicals_7day_keys_days)
-                        console.log(historicals_portfolio_7day_keys)
                         let historicals_portfolio_7day_values = '<%= historicals_portfolio_7day_values %>'.split(',');
+                        let lista_int2 = []
+                        for(let e=0; e != historicals_portfolio_7day_values.length; e++){
+                            lista_int2.push(parseInt(historicals_portfolio_7day_values[e]))
+                        }
+                        let max2 = Math.max.apply(null,lista_int2)
+                        let min2 = Math.min.apply(null,lista_int2)
+                        min2 =  min2 - ((max2- min2) * 0.15)
                         // Initialize the echarts instance based on the prepared dom
                         var myChart = echarts.init(document.getElementById('chart'));
                 
                         // Specify the configuration items and data for the chart
                         var option = {
                         title: {
-                            text: 'ECharts Getting Started'
+                            text: 'balance chart 24h'
                         },
                         tooltip: {
                             trigger: 'axis',
@@ -177,44 +188,57 @@
                         },
                         xAxis: {
                             data: historicals_portfolio_1day_keys,
+                            show: false,
                             axisLabel: {interval: 12, rotate: 60 }
+                            
                         },
-                        yAxis: {},
+                        yAxis: {
+                            min: min
+                        },
                         series: [
                             {
-                                name: 'usd',
-                                type: 'line',
-                                data: historicals_portfolio_1day_values,
-                                smooth: true,
+                            name: 'usd',
+                            type: 'line',
+                            data: historicals_portfolio_1day_values,
+                            areaStyle: {opacity: 0.36},
+                            smooth: true,
                                 showSymbol: false,
                                 lineStyle: {
-                                    width: 2
+                                    width: 1
                                 }
-                            },
+
+                            }
                         ]
-                        };               
+                    };              
                         // Display the chart using the configuration items and data just specified.
                         myChart.setOption(option);
                         $( document ).ready(function() {
                             let flag = false;
                             $('#change').click(function(){
                                 if(flag == false){
-                                    option.xAxis.data = historicals_7day_keys_days;
+                                    option.title.text = 'balance chart 24h'
+                                    option.xAxis.data = historicals_portfolio_7day_keys;
                                     option.series.data = historicals_portfolio_7day_values;
                                     option.xAxis.axisLabel.interval = 96
+                                    option.yAxis.min = min2
                                     flag = true
+                                    $('#7d').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
+                                    $('#24h').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
                                 }else{
+                                    option.title.text = 'balance chart 7 days'
                                     option.xAxis.data = historicals_portfolio_1day_keys;
                                     option.series.data = historicals_portfolio_1day_values;
                                     option.xAxis.axisLabel.interval = 12
+                                    option.yAxis.min = min
                                     flag = false
+                                    $('#24h').attr('class', 'px-[5px] bg-amber-400 rounded-lg text-lg')
+                                    $('#7d').attr('class', 'px-[5px] bg-amber-300 rounded-lg text-lg')
                                 }
                                 myChart.setOption(option);
                             })
                         });
                     </script>
                 </div>
-                <button id="change">click me</button>
                 <hr>
                 <div id="yourAssets" class="mt-[20px]">
                     <div class="flex justify-between">
