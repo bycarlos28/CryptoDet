@@ -127,6 +127,25 @@
                 </div>
                 <div id="chart" style="width: 100%;height:400px;">
                     <script type="text/javascript">
+                        let historicals_portfolio_1day_keys = '<%= historicals_portfolio_1day_keys %>'.split(',');
+                        for(let i=0; i != historicals_portfolio_1day_keys.length; i++){
+                            historicals_portfolio_1day_keys[i] = historicals_portfolio_1day_keys[i].split('.')[0].slice(0, -3).split(' ')[1];
+                        }
+                        let historicals_portfolio_1day_values = '<%= historicals_portfolio_1day_values %>'.split(',');
+
+
+                        let historicals_portfolio_7day_keys = '<%= historicals_portfolio_7day_keys %>'.split(',');
+                        let historicals_7day_keys_days = []
+                        for(let i=0; i != historicals_portfolio_7day_keys.length; i++){
+                            historicals_7day_keys_days[i] = historicals_portfolio_7day_keys[i].split('.')[0].split(' ')[0].split('-')[2];
+                        }
+
+                        for(let i=0; i != historicals_portfolio_7day_keys.length; i++){
+                            historicals_portfolio_7day_keys[i] = historicals_portfolio_7day_keys[i].split('.')[0].slice(0, -3);
+                        }
+                        console.log(historicals_7day_keys_days)
+                        console.log(historicals_portfolio_7day_keys)
+                        let historicals_portfolio_7day_values = '<%= historicals_portfolio_7day_values %>'.split(',');
                         // Initialize the echarts instance based on the prepared dom
                         var myChart = echarts.init(document.getElementById('chart'));
                 
@@ -135,27 +154,61 @@
                         title: {
                             text: 'ECharts Getting Started'
                         },
-                        tooltip: {},
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                            animation: false,
+                            type: 'cross',
+                            lineStyle: {
+                                color: '#376df4',
+                                width: 2,
+                                opacity: 1
+                            }
+                            }
+                        },
                         legend: {
                             data: ['sales']
                         },
                         xAxis: {
-                            data: ['Shirts', 'Cardigans', 'Chiffons', 'Pants', 'Heels', 'Socks']
+                            data: historicals_portfolio_1day_keys,
+                            axisLabel: {interval: 12, rotate: 60 }
                         },
                         yAxis: {},
                         series: [
                             {
-                            name: 'sales',
-                            type: 'bar',
-                            data: [5, 20, 36, 10, 10, 20]
-                            }
+                                name: 'usd',
+                                type: 'line',
+                                data: historicals_portfolio_1day_values,
+                                smooth: true,
+                                showSymbol: false,
+                                lineStyle: {
+                                    width: 2
+                                }
+                            },
                         ]
-                        };
-                
+                        };               
                         // Display the chart using the configuration items and data just specified.
                         myChart.setOption(option);
+                        $( document ).ready(function() {
+                            let flag = false;
+                            $('#change').click(function(){
+                                if(flag == false){
+                                    option.xAxis.data = historicals_7day_keys_days;
+                                    option.series.data = historicals_portfolio_7day_values;
+                                    option.xAxis.axisLabel.interval = 96
+                                    flag = true
+                                }else{
+                                    option.xAxis.data = historicals_portfolio_1day_keys;
+                                    option.series.data = historicals_portfolio_1day_values;
+                                    option.xAxis.axisLabel.interval = 12
+                                    flag = false
+                                }
+                                myChart.setOption(option);
+                            })
+                        });
                     </script>
                 </div>
+                <button id="change">click me</button>
                 <hr>
                 <div id="yourAssets" class="mt-[20px]">
                     <div class="flex justify-between">
