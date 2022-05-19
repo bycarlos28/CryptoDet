@@ -10,3 +10,5 @@ What this command will do is install all the dependencies that the project needs
 ### step 3: <br>
 Now we can run the project to do so we execute the following command:<br>
 ```npm run dev``` or ```node index.js```
+
+project developed by: Pau Valls & Carlos Fernandez
