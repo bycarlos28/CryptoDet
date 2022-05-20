@@ -21,5 +21,5 @@ De igual forma podemos añadir las monedas que más nos gusten a favoritos para 
 Si nuestro usuario está catalogado como Admin, en el menú desplegable de arriba a la derecha donde iría nuestro avatar podremos ver una nueva opción ("(A): Add Coin") es una opción administrativa que nos permitirá añadir todos los datos necesarios en la base de datos para que haya una nueva moneda disponible para registrar en nuestros portfolios además de que se empiecen a ejecutar las consultas a la API pública para ir recolectando los datos del precio de la nueva moneda.<br>
 Finalmente, en ese mismo desplegable tendremos la opción de cerrar la sesión dándole a "Log out".
 
-#project developed by: Pau Valls & Carlos Fernandez
+#project developed by: Pau Valls & Carlos Fernandez<br>
 #pvallsvilalta@gmail.com // carlosfernandez28correa@gmail.com
