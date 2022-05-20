@@ -41,7 +41,7 @@
                 if(user_id != ""){
                     const id = parseInt(coin_id)
                     let favourite_id
-                    let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+user_id+','+id+');' //TODO insertar user_id y no "1"
+                    let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+user_id+','+id+');'
                     $.ajax({
                         url: "/consulta/"+query,
                         method: "GET"

@@ -12,7 +12,6 @@ async function conection(url,header){
     }
     if (response) {
         // success
-        //console.log(response)
         const json = response.data;
         return json
     }
