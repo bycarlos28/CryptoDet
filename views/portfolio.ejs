@@ -57,7 +57,7 @@
                         '<img class="max-w-[25px] max-h-[25px] mt-[5px] mr-[10px]" src="/img/currencies/'+history_data[0].abbreviation.toLowerCase()+'.png">'+
                         '<h2 class="font-bold text-2xl">'+history_data[0].name+' Transaction History:</h2>'+
                     '</div>'+
-                    '<a class="rounded-xl p-[5px] pt-[2px] bg-[#FFC900] hover:cursor-pointer" onclick="window.location.href=\'../portfolio/'+portfolio_id+'\' ">Back to my assets</a>'+
+                    '<a class="rounded-xl p-[5px] pt-[2px] bg-[#FFC900] hover:cursor-pointer" onclick="window.location.href=\'/portfolio/'+portfolio_id+'\' ">Back to my assets</a>'+
                 '</div>'+
                 '<table id="history_table" class="ml-[20px] table-auto">'+
                         '<thead>'+
@@ -253,7 +253,7 @@
                 <div id="yourAssets" class="mt-[20px]">
                     <div class="flex justify-between">
                         <h2 class="font-bold text-xl">Your assets:</h2>
-                        <a class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]" href="../addAsset/<%= portfolio_id %>" rel="modal:open">+ Add asset</a>
+                        <a class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900]" href="/addAsset/<%= portfolio_id %>" rel="modal:open">+ Add asset</a>
                     </div>
                     <table id="assets_table" class="ml-[20px] table-auto">
                         <thead>
@@ -328,7 +328,7 @@
                         <% favourites.forEach(function(favourite){%>
                             <tr id="fav_<%=favourite.favourites_id%>">
                                 <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>')"><img class="max-w-[15px] max-h-[15px] mr-[7px]" src="/img/fullstar.png"></button></td>
-                                <td><a href="../coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
+                                <td><a href="/coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
                             </tr>
                         <%}); %>
                     </tbody>

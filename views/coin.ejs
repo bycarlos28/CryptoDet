@@ -71,7 +71,6 @@
                     let historicals_1day_values = '<%= historicals_1day_values %>'.split(',');
                     let lista_int = []
                     for(let e=0; e != historicals_1day_values.length; e++){
-                        console.log(typeof(parseInt(historicals_1day_values[e])))
                         lista_int.push(parseInt(historicals_1day_values[e]))
                     }
                     let max = Math.max.apply(null,lista_int)
@@ -84,7 +83,6 @@
                     let historicals_7day_values = '<%= historicals_7day_values %>'.split(',');
                     let lista_int2 = []
                     for(let e=0; e != historicals_7day_values.length; e++){
-                        console.log(typeof(parseInt(historicals_7day_values[e])))
                         lista_int2.push(parseInt(historicals_7day_values[e]))
                     }
                     let max2 = Math.max.apply(null,lista_int2)
@@ -139,7 +137,6 @@
                     $( document ).ready(function() {
                             let flag = false;
                             $('#change').click(function(){
-                                console.log('hola')
                                 if(flag == false){
                                     option.title.text = '<%= coin.name %> to USD Chart 7days'
                                     option.xAxis.data = historicals_7day_keys;
@@ -215,9 +212,11 @@
                                 <% } else { %>
                                     <td class="text-center"><button onclick="deletefav('<%=favourite.favourites_id%>', false)"><img class="max-w-[15px] max-h-[15px]" src="/img/fullstar.png"></button></td>
                                 <% } %>
-                                    <td><a href="../coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
+                                    <td><a href="/coin/<%=favourite.abbreviation.toLowerCase()%>"><p><%= favourite.name %> ($<%= favourite.abbreviation%>)</p></a></td>
                                 </tr>
                             <%}); %>
+                        <% } else { %>
+                            <a href="/login" class="rounded-xl p-[4px] pt-[2px] bg-[#FFC900] max-w-[60px] self-center mt-[20px] hover:cursor-pointer">Log in to Add favourites</a>
                         <% } %>
                     </tbody>
                 </table>

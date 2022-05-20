@@ -1,8 +1,6 @@
 $( document ).ready(function() {
     $('#enviar').click(function(event) {
-        if (validar_passwords() == true){
-            console.log('hola')
-        }else{
+        if (validar_passwords() != true){
             $('#form').append('<div id="msg_password"><p>Passwords do not match</p></div>')
             event.preventDefault()
         }
@@ -126,6 +124,8 @@ async function addfav(favid, userid) {
           $("#buttonfavstar").attr("onclick", "deletefav('"+favourite_id+"', true)")
       } catch (err) {}
       spawnFeedbackBox("success", coin_name+" added to favourites")
+    } else {
+      spawnFeedbackBox("error", "You must be logged in to add favourites.")
     }
 }
 
@@ -324,7 +324,6 @@ async function deleteTransaction(portfolio_id, coin_id, transaction_id, tx_type)
         success: function(result){
             spawnFeedbackBox("Success", "Transaction deleted.")
             $("#tr_tx_"+transaction_id).remove()
-            // window.location="/portfolio/"+portfolio_id // better delete the row and not redirect the url
         }
     });
 }

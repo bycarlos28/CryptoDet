@@ -41,7 +41,7 @@
                 if(user_id != ""){
                     const id = parseInt(coin_id)
                     let favourite_id
-                    let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+user_id+','+id+');' //TODO insertar user_id y no "1"
+                    let query = 'INSERT INTO favourites (user_id, coin_id) VALUES ('+user_id+','+id+');'
                     $.ajax({
                         url: "/consulta/"+query,
                         method: "GET"
@@ -86,7 +86,7 @@
                     </th>
                     <th>
                         <div class="flex items-center justify-center">
-                            <p class="text-xl">Market Cap (M $USD)</p>
+                            <p class="text-xl">Market Cap</p>
                             <img class="max-w-[10px] max-h-[10px] ml-[10px] mt-[5px]" src="/img/sortable.png">
                         </div>
                     </th>
